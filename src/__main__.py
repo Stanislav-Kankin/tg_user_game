@@ -1,0 +1,270 @@
+from random import randint
+from datetime import datetime, timedelta
+import pytz
+from typing import Callable, Awaitable, Any
+
+from aiogram import Bot, Dispatcher, BaseMiddleware, F
+from aiogram.client.default import DefaultBotProperties
+from aiogram.types import (
+    Message, Update, WebAppInfo, CallbackQuery, InlineKeyboardButton
+    )
+from aiogram.filters import CommandStart
+from aiogram.enums import ParseMode
+from aiogram.utils.keyboard import InlineKeyboardBuilder
+from aiogram.utils.web_app import safe_parse_webapp_init_data
+
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
+
+from tortoise import Tortoise
+import uvicorn
+
+from models import User
+from config_reader import config
+
+
+class UserMiddleware(BaseMiddleware):
+    """
+    Middleware для обработки пользовательских данных.
+    """
+    async def __call__(
+        self,
+        handler: Callable[[Message, dict[str, Any]], Awaitable[Any]],
+        event: Message,
+        data: dict[str, Any]
+    ) -> Any:
+        """
+        Обработчик middleware для добавления пользовательских
+        данных в контекст события.
+
+        :param handler: Обработчик события.
+        :param event: Событие.
+        :param data: Данные события.
+        :return: Результат выполнения обработчика.
+        """
+        if not event.from_user.username:
+            return await event.answer(
+                "Нужно задать имя пользователя чтобы использовать бот."
+                )
+
+        user = await User.get_or_create(
+            id=event.from_user.id, username=event.from_user.username
+            )
+        data["user"] = user[0]
+        return await handler(event, data)
+
+
+async def lifespan(app: FastAPI):
+    """
+    Функция для управления жизненным циклом FastAPI приложения.
+
+    :param app: Экземпляр FastAPI приложения.
+    """
+    await bot.set_webhook(
+        url=f"{config.WEBAPP_URL}/webhook",
+        allowed_updates=dp.resolve_used_update_types(),
+        drop_pending_updates=True,
+    )
+
+    await Tortoise.init(
+        db_url=config.DB_URL.get_secret_value(),
+        modules={"models": ["models"]}
+        )
+    await Tortoise.generate_schemas()
+    yield
+    await Tortoise.close_connections()
+    await bot.session.close()
+
+bot = Bot(
+    token=config.BOT_TOKEN.get_secret_value(),
+    default=DefaultBotProperties(parse_mode=ParseMode.HTML)
+)
+dp = Dispatcher()
+
+app = FastAPI(lifespan=lifespan)
+templates = Jinja2Templates(directory=config.TEMPLATES_PATH)
+
+dp.message.middleware(UserMiddleware())
+app.mount("/static", StaticFiles(directory=config.STATIC_PATH), name="static")
+
+
+@dp.message(CommandStart())
+async def start(message: Message, user: User):
+    """
+    Обработчик команды /start.
+
+    :param message: Сообщение.
+    :param user: Пользователь.
+    """
+    dict_markup = None
+    dt_time_cmd_start = datetime.now(pytz.utc)
+    if 1 <= user.number_of_tries <= 5:
+        dict_markup = (
+            InlineKeyboardBuilder()
+            .button(
+                text="🍀 Испытай свою удачу!",
+                web_app=WebAppInfo(url=config.WEBAPP_URL))
+        ).as_markup()
+    elif user.number_of_tries <= 0:
+        dict_markup = (
+            InlineKeyboardBuilder()
+            .row(
+                InlineKeyboardButton(
+                    text="🤑 Добавить ящики сейчас(КУПИТЬ)!",
+                    callback_data="pay"
+                )
+            )
+            .row(
+                InlineKeyboardButton(
+                    text="🥰 Пригласи друга в группу и получишь +1 попытку!",
+                    callback_data="friend"
+                )
+            )
+        ).as_markup()
+
+    await message.answer(
+        f"🎁 <b>Ящиков открыто:</b> <code>{user.luckyboxes['count']}</code> "
+        f"(+<code>{user.luckyboxes['cash']}</code>)\n"
+        f"🎲 Осталось ящиков <b>{user.number_of_tries}</b>.\n",
+
+        reply_markup=dict_markup
+    )
+    user.cmd_str = dt_time_cmd_start
+    await user.save()
+    if user.number_of_tries < 5 and user.next_usage > user.cmd_str:
+        user.number_of_tries = user.number_of_tries
+    elif user.number_of_tries < 5 and user.next_usage <= user.cmd_str:
+        user.number_of_tries = 5
+        await user.save()
+
+
+@dp.callback_query(F.data == "pay")
+async def pay(callback_query: CallbackQuery):
+    await callback_query.message.answer(
+        "тут будет логика получения оплаты."
+    )
+
+
+@dp.callback_query(F.data == "friend")
+async def invite_friend(callback_query: CallbackQuery):
+    await callback_query.message.answer(
+        "тут логика приглашения друга в целевую группу."
+    )
+
+
+@app.get("/")
+async def root(request: Request):
+    """
+    Обработчик корневого маршрута.
+
+    :param request: Запрос.
+    :return: Ответ с шаблоном index.html.
+    """
+    return templates.TemplateResponse("index.html", {"request": request})
+
+
+@app.post("/open-box")
+async def open_box(request: Request):
+    """
+    Обработчик маршрута для открытия ящика.
+
+    :param request: Запрос.
+    :return: JSON ответ с результатом открытия ящика.
+    """
+    authorization = request.headers.get("Authentication")
+    try:
+        data = safe_parse_webapp_init_data(bot.token, authorization)
+    except ValueError:
+        return JSONResponse({"success": False, "error": "Unauthorized"}, 401)
+
+    dt_current_datetime = datetime.now(pytz.utc)
+    dt_next_use = dt_current_datetime + timedelta(seconds=30)
+
+    i_cash = randint(0, 1000)
+    user = await User.filter(id=data.user.id).first()
+
+    if user.number_of_tries == 0:
+        return JSONResponse(
+            {"success": False,
+             "error": "Невозможно открыть сейчас. Нет ящиков. 😢",
+             "cash": -1}
+            )
+
+    user.luckyboxes["count"] += 1
+    user.luckyboxes["cash"] += i_cash
+    user.number_of_tries -= 1
+    user.time_of_use = dt_current_datetime
+    user.next_usage = dt_next_use
+
+    await user.save()
+
+    return JSONResponse({"success": True, "cash": i_cash})
+
+
+@app.post("/get-stats")
+async def get_stats(request: Request):
+    """
+    Обработчик запроса для получения статистики пользователя.
+
+    Args:
+        request (Request): Объект запроса, содержащий заголовки и данные.
+
+    Returns:
+        JSONResponse: Ответ в формате JSON, содержащий статистику пользователя.
+
+    Raises:
+        JSONResponse: Возвращает ошибку 401, если заголовок
+        Authentication недействителен.
+        JSONResponse: Возвращает ошибку 404, если пользователь не найден.
+    """
+    authorization = request.headers.get("Authentication")
+    try:
+        data = safe_parse_webapp_init_data(bot.token, authorization)
+    except ValueError:
+        return JSONResponse({"success": False, "error": "Unauthorized"}, 401)
+
+    user = await User.filter(id=data.user.id).first()
+    if user is None:
+        return JSONResponse({"success": False, "error": "User not found"}, 404)
+
+    return JSONResponse({
+        "success": True,
+        "wins": user.luckyboxes["cash"],
+        "total_boxes": user.luckyboxes["count"]
+    })
+
+
+async def main():
+    """
+    Основная функция для запуска бота и инициализации базы данных.
+    """
+    await bot.set_webhook(
+        url=f"{config.WEBAPP_URL}/webhook",
+        allowed_updates=dp.resolve_used_update_types(),
+        drop_pending_updates=True,
+    )
+
+    await Tortoise.init(
+        db_url=config.DB_URL.get_secret_value(),
+        modules={"models": ["models"]}
+        )
+    await Tortoise.generate_schemas()
+
+    await bot.session.close()
+
+
+@app.post("/webhook")
+async def webhook(request: Request):
+    """
+    Обработчик вебхука для бота.
+
+    :param request: Запрос.
+    """
+    update = Update.model_validate(await request.json(), context={"bot": bot})
+    await dp.feed_update(bot, update)
+
+
+if __name__ == "__main__":
+    uvicorn.run(app)
