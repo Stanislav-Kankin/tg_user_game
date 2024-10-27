@@ -98,6 +98,7 @@ async def start(message: Message, user: User):
     await message.answer(
         "Привет, мы можем поиграть, если хочешь!",
         reply_markup=dict_markup
+        )
 
 
 @app.get("/")
