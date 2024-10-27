@@ -3,7 +3,7 @@ from typing import Callable, Awaitable, Any
 
 from aiogram import Bot, Dispatcher, BaseMiddleware
 from aiogram.client.default import DefaultBotProperties
-from aiogram.types import Message, WebAppInfo
+from aiogram.types import Message, WebAppInfo, Update
 from aiogram.filters import CommandStart
 from aiogram.enums import ParseMode
 from aiogram.utils.keyboard import InlineKeyboardBuilder
