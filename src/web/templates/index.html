@@ -4,130 +4,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lucky Box</title>
+    <title>Game</title>
     <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
 </head>
 
 <body>
-
-    <div class="box">
-        <h1 id="headline">Lucky Box</h1>
-        <img src="../static/images/closed-box.png" alt="Closed Box" id="img-box">
-        <button id="open-box">Открыть</button>
-        <button id="show-stats">Показать статистику</button>
-    </div>
-
     <div class="container">
-        <div class="bubbles"></div>
-    </div>
-
-    <div id="stats" class="stats hidden">
-        <h2>Статистика</h2>
-        <p>Выигрыши: <span id="wins">0</span></p>
-        <p>Всего коробок открыто: <span id="total-boxes">0</span></p>
+        <img src="{{ url_for('static', path='images/bg_blue.png') }}" alt="Background" class="background">
+        <div class="buttons">
+            <button id="play-game" class="game-button">Play</button>
+            <button id="show-score" class="game-button">Score</button>
+        </div>
     </div>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        const tg = window.Telegram.WebApp
-        const defaultUrl = "https://a4d3-147-45-193-130.ngrok-free.app"
+        const tg = window.Telegram.WebApp;
+        const defaultUrl = "https://a4d3-147-45-193-130.ngrok-free.app";
 
-        tg.headerColor = "#fff"
-        tg.expand()
-
-        document.addEventListener("DOMContentLoaded", () => {
-            const bubblesElem = document.querySelector(".bubbles")
-
-            for (let i = 0; i < 64; i++) {
-                const bubbleElem = document.createElement("span")
-                const randomId = Math.floor(Math.random() * 64) + 1
-
-                bubbleElem.style.setProperty("--i", randomId)
-                bubblesElem.appendChild(bubbleElem)
-            }
-        });
+        tg.headerColor = "#fff";
+        tg.expand();
 
         async function fetchData(endpoint, data) {
             try {
-                console.log(`${defaultUrl}/${endpoint}`)
                 const response = await fetch(`${defaultUrl}/${endpoint}`, {
                     method: "POST",
                     headers: { Authentication: tg.initData },
                     body: JSON.stringify(data)
-                })
-                const responseData = await response.json()
-                return responseData
+                });
+                const responseData = await response.json();
+                return responseData;
             } catch (error) {
-                console.log(`Error: ${error}`)
-                throw error
+                console.error(`Error: ${error}`);
+                throw error;
             }
         }
 
-        function showSpinningNumber(element, duration, finalNumber) {
-            const startTime = Date.now();
-            const interval = 50;
-
-            const spin = () => {
-                const elapsedTime = Date.now() - startTime;
-                if (elapsedTime < duration) {
-                    element.innerHTML = Math.floor(Math.random() * 1000);
-                    setTimeout(spin, interval);
-                } else {
-                    element.innerHTML = finalNumber;
-                }
-            };
-
-            spin();
-        }
-
-        document.querySelector("#open-box").addEventListener("click", async () => {
-            const img = document.querySelector("#img-box")
-            const btn = document.querySelector("#open-box")
-            const text = document.querySelector("#headline")
-
-            img.style.transform = "scale(0.5)"
+        document.querySelector("#play-game").addEventListener("click", async () => {
+            const btn = document.querySelector("#play-game");
+            btn.style.transform = "scale(0.9)";
             setTimeout(() => {
-                img.style.transform = "scale(1)"
-            }, 500)
+                btn.style.transform = "scale(1)";
+            }, 500);
 
-            showSpinningNumber(text, 3000, "");
-
-            const data = await fetchData("open-box", { id: tg.initDataUnsafe.user.id });
-            const cash = data.cash;
-
-            setTimeout(() => {
-                if (cash >= 0 && cash < 100) {
-                    img.src = "../static/images/empty-box.png";
-                } else if (cash >= 100 && cash < 500) {
-                    img.src = "../static/images/20box.png";
-                } else if (cash >= 500 && cash < 700) {
-                    img.src = "../static/images/50box.png";
-                } else {
-                    img.src = "../static/images/fullbox.png";
-                }
-
-                text.innerHTML = cash === -1 ? data.error : `Выигрыш: <span id='cash'>${cash}</span> $`;
-                btn.disabled = false;
-            }, 3000);
+            // Логика игры
         });
 
-        document.querySelector("#show-stats").addEventListener("click", async () => {
-            const stats = document.querySelector("#stats");
-            const winsElem = document.querySelector("#wins");
-            const totalBoxesElem = document.querySelector("#total-boxes");
+        document.querySelector("#show-score").addEventListener("click", async () => {
+            const btn = document.querySelector("#show-score");
+            btn.style.transform = "scale(0.9)";
+            setTimeout(() => {
+                btn.style.transform = "scale(1)";
+            }, 500);
 
-            const data = await fetchData("get-stats", { id: tg.initDataUnsafe.user.id });
-            if (data.success) {
-                winsElem.textContent = data.wins;
-                totalBoxesElem.textContent = data.total_boxes;
-                stats.classList.toggle("hidden");
-            } else {
-                alert(data.error);
-            }
+            // Логика отображения счета
         });
-
     </script>
-
 </body>
 
 </html>
