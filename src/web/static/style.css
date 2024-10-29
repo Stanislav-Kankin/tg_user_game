@@ -1,113 +1,108 @@
 /* Общие стили для всех элементов */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Fulbo";
+    margin: 0; /* Убирает внешние отступы */
+    padding: 0; /* Убирает внутренние отступы */
+    box-sizing: border-box; /* Включает padding и border в общую ширину и высоту элемента */
+    font-family: "Fulbo"; /* Устанавливает пользовательский шрифт для всех элементов */
 }
 
 /* Стили для тела документа */
 body {
-    background: #0f0a18;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
+    background: #0f0a18; /* Устанавливает фон страницы */
+    display: flex; /* Использует flexbox для расположения элементов */
+    align-items: center; /* Центрирует элементы по вертикали */
+    justify-content: center; /* Центрирует элементы по горизонтали */
+    min-height: 100vh; /* Устанавливает минимальную высоту страницы равной высоте окна браузера */
 }
 
 /* Стили для контейнера */
 .container {
-    position: relative;
-    width: 100%;
-    height: 100vh;
-    overflow: hidden;
+    position: relative; /* Позиционирует элемент относительно его нормального положения */
+    width: 100%; /* Устанавливает ширину элемента */
+    height: 100vh; /* Устанавливает высоту элемента */
+    overflow: hidden; /* Скрывает содержимое, которое выходит за пределы элемента */
 }
 
 /* Стили для заднего фона */
 .background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: -1;
+    position: absolute; /* Позиционирует элемент абсолютно относительно ближайшего позиционированного предка */
+    top: 0; /* Устанавливает верхнее положение элемента */
+    left: 0; /* Устанавливает левое положение элемента */
+    width: 100%; /* Устанавливает ширину элемента */
+    height: 100%; /* Устанавливает высоту элемента */
+    object-fit: cover; /* Устанавливает режим масштабирования изображения */
+    z-index: -1; /* Устанавливает порядок наложения элемента */
 }
 
 /* Стили для контейнера с кнопками */
 .buttons {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    display: flex; /* Использует flexbox для расположения элементов */
+    flex-direction: row; /* Устанавливает направление flex-контейнера по строке */
+    align-items: center; /* Центрирует элементы по вертикали */
+    justify-content: center; /* Центрирует элементы по горизонтали */
+    position: absolute; /* Позиционирует элемент абсолютно относительно ближайшего позиционированного предка */
+    top: 50%; /* Устанавливает вертикальное положение элемента */
+    left: 50%; /* Устанавливает горизонтальное положение элемента */
+    transform: translate(-50%, -50%); /* Центрирует элемент */
 }
 
 /* Стили для группы кнопок */
 .button-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 0 20px;
+    display: flex; /* Использует flexbox для расположения элементов */
+    flex-direction: row; /* Устанавливает направление flex-контейнера по столбцу */
+    align-items: center; /* Центрирует элементы по горизонтали */
+    margin: 0 20px; /* Добавляет горизонтальные отступы между группами кнопок */
 }
 
 /* Стили для кнопок */
 .game-button {
-    width: 200px;
-    height: auto;
-    max-height: 200px;
-    cursor: pointer;
-    transition: transform 0.3s ease-in-out;
+    width: 200px; /* Устанавливает фиксированную ширину элемента */
+    height: auto; /* Устанавливает автоматическую высоту элемента */
+    max-height: 200px; /* Устанавливает максимальную высоту элемента */
+    cursor: pointer; /* Устанавливает курсор в виде указателя */
+    transition: transform 0.3s ease-in-out; /* Добавляет плавный переход для свойства transform */
 }
 
 /* Стили для кнопок при наведении курсора */
 .game-button:hover {
-    transform: scale(0.9);
+    transform: scale(0.9); /* Уменьшает элемент в размере */
 }
 
 /* Стили для надписей под кнопками */
 .button-label {
-    margin-top: 10px;
-    font-size: 22px;
-    color: #07a950;
-    text-align: center;
-}
-
-/* Стили для прозрачного фона */
-.transparent-bg {
-    background-color: transparent;
+    margin-top: 10px; /* Добавляет верхний отступ */
+    font-size: 22px; /* Устанавливает размер шрифта */
+    color: #07a950; /* Устанавливает цвет текста */
+    text-align: center; /* Центрирует текст по горизонтали */
 }
 
 /* Медиа-запросы для адаптации под разные размеры экрана */
 @media (max-width: 768px) {
     .buttons {
-        flex-direction: column;
+        flex-direction: column; /* Устанавливает направление flex-контейнера по столбцу */
     }
 
     .button-group {
-        margin: 20px 0;
+        margin: 20px 0; /* Добавляет вертикальные отступы между группами кнопок */
     }
 
     .game-button {
-        width: 80px;
-        max-height: 80px;
+        width: 80px; /* Уменьшает ширину кнопок */
+        max-height: 80px; /* Уменьшает максимальную высоту кнопок */
     }
 
     .button-label {
-        font-size: 14px;
+        font-size: 14px; /* Уменьшает размер шрифта */
     }
 }
 
 @media (max-width: 480px) {
     .game-button {
-        width: 60px;
-        max-height: 60px;
+        width: 60px; /* Уменьшает ширину кнопок */
+        max-height: 60px; /* Уменьшает максимальную высоту кнопок */
     }
 
     .button-label {
-        font-size: 12px;
+        font-size: 12px; /* Уменьшает размер шрифта */
     }
 }
