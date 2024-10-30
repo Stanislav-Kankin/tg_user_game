@@ -51,15 +51,61 @@
 
         let rocketPosition = 0;
         const step = 10; // Шаг перемещения ракеты
+        let moveInterval;
 
-        leftArrow.addEventListener("click", () => {
-            rocketPosition -= step;
-            rocket.style.transform = `translateX(${rocketPosition}px)`;
+        function startMove(direction) {
+            moveInterval = setInterval(() => {
+                if (direction === 'left') {
+                    rocketPosition -= step;
+                } else if (direction === 'right') {
+                    rocketPosition += step;
+                }
+                rocket.style.transform = `translateX(${rocketPosition}px)`;
+            }, 50); // Интервал обновления позиции
+        }
+
+        function stopMove() {
+            clearInterval(moveInterval);
+        }
+
+        leftArrow.addEventListener("mousedown", () => {
+            startMove('left');
         });
 
-        rightArrow.addEventListener("click", () => {
-            rocketPosition += step;
-            rocket.style.transform = `translateX(${rocketPosition}px)`;
+        leftArrow.addEventListener("mouseup", () => {
+            stopMove();
+        });
+
+        leftArrow.addEventListener("mouseleave", () => {
+            stopMove();
+        });
+
+        rightArrow.addEventListener("mousedown", () => {
+            startMove('right');
+        });
+
+        rightArrow.addEventListener("mouseup", () => {
+            stopMove();
+        });
+
+        rightArrow.addEventListener("mouseleave", () => {
+            stopMove();
+        });
+
+        leftArrow.addEventListener("touchstart", () => {
+            startMove('left');
+        });
+
+        leftArrow.addEventListener("touchend", () => {
+            stopMove();
+        });
+
+        rightArrow.addEventListener("touchstart", () => {
+            startMove('right');
+        });
+
+        rightArrow.addEventListener("touchend", () => {
+            stopMove();
         });
     </script>
 </body>
