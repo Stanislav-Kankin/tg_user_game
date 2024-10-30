@@ -1,171 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game</title>
-    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+    <title>Rocket Game</title>
+    <link rel="stylesheet" href="../static/style.css">
 </head>
-
 <body>
-    <div class="container">
-        <img src="{{ url_for('static', path='images/bg_star.jpg') }}" alt="Background" class="background">
-        <div class="buttons">
-            <div class="button-group">
-                <img src="{{ url_for('static', path='images/rocket.gif') }}" alt="Rocket" class="game-button" id="rocket">
-            </div>
-        </div>
-        <div class="control-buttons">
-            <img src="{{ url_for('static', path='images/arr.png') }}" alt="Left Arrow" class="arrow left-arrow" id="left-arrow">
-            <img src="{{ url_for('static', path='images/arr.png') }}" alt="Right Arrow" class="arrow right-arrow" id="right-arrow">
-        </div>
-        <div class="asteroids">
-            <img src="{{ url_for('static', path='images/aster1.png') }}" alt="Asteroid 1" class="asteroid asteroid1">
-            <img src="{{ url_for('static', path='images/aster2.png') }}" alt="Asteroid 2" class="asteroid asteroid2">
-        </div>
+    <div id="game-container">
+        <img id="rocket" src="../static/images/rocket.gif" alt="Rocket">
+        <img id="asteroid1" src="../static/images/aster1.png" alt="Asteroid 1" class="asteroid">
+        <img id="asteroid2" src="../static/images/aster2.png" alt="Asteroid 2" class="asteroid">
+        <img id="asteroid3" src="../static/images/aster3.png" alt="Asteroid 3" class="asteroid">
+        <img id="asteroid4" src="../static/images/aster4.png" alt="Asteroid 4" class="asteroid">
     </div>
-
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        const tg = window.Telegram.WebApp;
-        const defaultUrl = "https://3f86-147-45-193-130.ngrok-free.app"; // TUNNEL!!!
+        document.addEventListener('DOMContentLoaded', () => {
+            const rocket = document.getElementById('rocket');
+            const asteroid1 = document.getElementById('asteroid1');
+            const asteroid2 = document.getElementById('asteroid2');
+            const asteroid3 = document.getElementById('asteroid3');
+            const asteroid4 = document.getElementById('asteroid4');
+            const gameContainer = document.getElementById('game-container');
 
-        tg.headerColor = "#fff";
-        tg.expand();
+            let isDragging = false;
+            let offsetX, offsetY;
 
-        async function fetchData(endpoint, data) {
-            try {
-                const response = await fetch(`${defaultUrl}/${endpoint}`, {
-                    method: "POST",
-                    headers: { Authentication: tg.initData },
-                    body: JSON.stringify(data)
-                });
-                const responseData = await response.json();
-                return responseData;
-            } catch (error) {
-                console.error(`Error: ${error}`);
-                throw error;
-            }
-        }
+            rocket.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                offsetX = e.clientX - rocket.getBoundingClientRect().left;
+                offsetY = e.clientY - rocket.getBoundingClientRect().top;
+            });
 
-        const rocket = document.querySelector("#rocket");
-        const leftArrow = document.querySelector("#left-arrow");
-        const rightArrow = document.querySelector("#right-arrow");
-
-        let rocketPosition = 0;
-        const step = 10; // Шаг перемещения ракеты
-        let moveInterval;
-        const container = document.querySelector(".container");
-        const containerWidth = container.clientWidth;
-        console.log(containerWidth);
-        const rocketWidth = rocket.clientWidth;
-        const maxMovement = containerWidth / 2 - rocketWidth / 2; // Максимальное расстояние для движения вправо и влево
-
-        // Устанавливаем начальное положение ракеты в центре экрана
-        rocket.style.transform = `translateX(${containerWidth / 2 - rocketWidth / 2}px)`;
-        rocketPosition = containerWidth / 2 - rocketWidth / 2;
-
-        function startMove(direction) {
-            moveInterval = setInterval(() => {
-                if (direction === 'left') {
-                    rocketPosition -= step;
-                    if (rocketPosition < containerWidth / 2 - rocketWidth / 2 - maxMovement) {
-                        rocketPosition = containerWidth / 2 - rocketWidth / 2 - maxMovement;
-                    }
-                } else if (direction === 'right') {
-                    rocketPosition += step;
-                    if (rocketPosition > containerWidth / 2 - rocketWidth / 2 + maxMovement) {
-                        rocketPosition = containerWidth / 2 - rocketWidth / 2 + maxMovement;
-                    }
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    let x = e.clientX - offsetX;
+                    let y = e.clientY - offsetY;
+                    rocket.style.left = `${x}px`;
+                    rocket.style.top = `${y}px`;
                 }
-                rocket.style.transform = `translateX(${rocketPosition}px)`;
-            }, 50); // Интервал обновления позиции
-        }
+            });
 
-        function stopMove() {
-            clearInterval(moveInterval);
-        }
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
 
-        leftArrow.addEventListener("mousedown", () => {
-            startMove('left');
-        });
+            rocket.addEventListener('touchstart', (e) => {
+                isDragging = true;
+                const touch = e.touches[0];
+                offsetX = touch.clientX - rocket.getBoundingClientRect().left;
+                offsetY = touch.clientY - rocket.getBoundingClientRect().top;
+            });
 
-        leftArrow.addEventListener("mouseup", () => {
-            stopMove();
-        });
+            document.addEventListener('touchmove', (e) => {
+                if (isDragging) {
+                    const touch = e.touches[0];
+                    let x = touch.clientX - offsetX;
+                    let y = touch.clientY - offsetY;
+                    rocket.style.left = `${x}px`;
+                    rocket.style.top = `${y}px`;
+                }
+            });
 
-        leftArrow.addEventListener("mouseleave", () => {
-            stopMove();
-        });
+            document.addEventListener('touchend', () => {
+                isDragging = false;
+            });
 
-        rightArrow.addEventListener("mousedown", () => {
-            startMove('right');
-        });
+            function moveAsteroid(asteroid, delay) {
+                asteroid.style.top = '-50px';
+                asteroid.style.left = `${Math.random() * (gameContainer.clientWidth - 50)}px`;
+                asteroid.style.transition = `top ${delay}s linear`;
+                asteroid.style.top = `${gameContainer.clientHeight}px`;
 
-        rightArrow.addEventListener("mouseup", () => {
-            stopMove();
-        });
-
-        rightArrow.addEventListener("mouseleave", () => {
-            stopMove();
-        });
-
-        leftArrow.addEventListener("touchstart", (e) => {
-            e.preventDefault(); // Отключаем контекстное меню
-            startMove('left');
-        });
-
-        leftArrow.addEventListener("touchend", () => {
-            stopMove();
-        });
-
-        rightArrow.addEventListener("touchstart", (e) => {
-            e.preventDefault(); // Отключаем контекстное меню
-            startMove('right');
-        });
-
-        rightArrow.addEventListener("touchend", () => {
-            stopMove();
-        });
-
-        // Функция для анимации астероидов
-function animateAsteroid(asteroid, duration) {
-    asteroid.style.top = '-100px'; // Начальная позиция сверху
-    asteroid.style.transition = `top ${duration}s linear`;
-    asteroid.style.top = '100vh'; // Конечная позиция внизу
-
-    const rocketBottom = rocket.offsetTop + rocket.clientHeight + 5; // Позиция ракеты + 5 пикселей
-
-    const checkPosition = setInterval(() => {
-        const currentAsteroidBottom = asteroid.offsetTop + asteroid.clientHeight;
-
-        if (currentAsteroidBottom >= rocketBottom) {
-            clearInterval(checkPosition);
-            asteroid.style.opacity = '0'; // Скрыть астероид
-
-            // Задержка перед сбросом позиции
-            setTimeout(() => {
-                asteroid.style.top = '-100px'; // Сброс позиции
-                asteroid.style.transition = ''; // Сброс анимации
-                asteroid.style.opacity = '1'; // Показать астероид
-
-                // Запуск новой анимации с задержкой
                 setTimeout(() => {
-                    animateAsteroid(asteroid, duration); // Рекурсивный вызов для повторения анимации
-                }, 100); // Задержка перед повторным запуском анимации
-            }, 1000); // Задержка до появления новых астероидов
-        }
-    }, 100); // Интервал проверки положения
-}
+                    asteroid.style.transition = 'none';
+                    moveAsteroid(asteroid, delay);
+                }, delay * 1000);
+            }
 
+            function checkCollision() {
+                const rocketRect = rocket.getBoundingClientRect();
+                const asteroid1Rect = asteroid1.getBoundingClientRect();
+                const asteroid2Rect = asteroid2.getBoundingClientRect();
+                const asteroid3Rect = asteroid3.getBoundingClientRect();
+                const asteroid4Rect = asteroid4.getBoundingClientRect();
 
-        // Запуск анимации астероидов
-        const asteroid1 = document.querySelector(".asteroid1");
-        const asteroid2 = document.querySelector(".asteroid2");
-        animateAsteroid(asteroid1, 3);
-        animateAsteroid(asteroid2, 7);
+                const asteroids = [
+                    { element: asteroid1, rect: asteroid1Rect, delay: 4 },
+                    { element: asteroid2, rect: asteroid2Rect, delay: 6 },
+                    { element: asteroid3, rect: asteroid3Rect, delay: 7 },
+                    { element: asteroid4, rect: asteroid4Rect, delay: 9 }
+                ];
+
+                asteroids.forEach(asteroid => {
+                    if (
+                        rocketRect.left < asteroid.rect.right &&
+                        rocketRect.right > asteroid.rect.left &&
+                        rocketRect.top < asteroid.rect.bottom &&
+                        rocketRect.bottom > asteroid.rect.top
+                    ) {
+                        asteroid.element.style.display = 'none';
+                        showMessage(asteroid.rect.left, asteroid.rect.top, '- 10', 'red');
+                        setTimeout(() => {
+                            asteroid.element.style.display = 'block';
+                        }, asteroid.delay * 1000);
+                    } else if (asteroid.rect.bottom >= gameContainer.clientHeight) {
+                        showMessage(asteroid.rect.left, asteroid.rect.top, '+ 5', 'green');
+                    }
+                });
+            }
+
+            function showMessage(left, top, text, color) {
+                const message = document.createElement('div');
+                message.className = 'message';
+                message.style.left = `${left}px`;
+                message.style.top = `${top}px`;
+                message.style.color = color;
+                message.innerText = text;
+                gameContainer.appendChild(message);
+
+                setTimeout(() => {
+                    message.style.opacity = '0';
+                }, 1000);
+
+                setTimeout(() => {
+                    gameContainer.removeChild(message);
+                }, 2000);
+            }
+
+            setInterval(checkCollision, 100);
+
+            moveAsteroid(asteroid1, 4);
+            moveAsteroid(asteroid2, 6);
+            moveAsteroid(asteroid3, 7);
+            moveAsteroid(asteroid4, 9);
+        });
     </script>
 </body>
-
 </html>

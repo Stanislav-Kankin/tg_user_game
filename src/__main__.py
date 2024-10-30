@@ -1,4 +1,3 @@
-
 from typing import Callable, Awaitable, Any
 
 from aiogram import Bot, Dispatcher, BaseMiddleware
@@ -7,10 +6,8 @@ from aiogram.types import Message, WebAppInfo, Update
 from aiogram.filters import CommandStart
 from aiogram.enums import ParseMode
 from aiogram.utils.keyboard import InlineKeyboardBuilder
-from aiogram.utils.web_app import safe_parse_webapp_init_data
 
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 
@@ -104,25 +101,6 @@ async def start(message: Message, user: User):
 @app.get("/")
 async def root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
-
-
-async def main():
-    """
-    Основная функция для запуска бота и инициализации базы данных.
-    """
-    await bot.set_webhook(
-        url=f"{config.WEBAPP_URL}/webhook",
-        allowed_updates=dp.resolve_used_update_types(),
-        drop_pending_updates=True,
-    )
-
-    await Tortoise.init(
-        db_url=config.DB_URL.get_secret_value(),
-        modules={"models": ["models"]}
-        )
-    await Tortoise.generate_schemas()
-
-    await bot.session.close()
 
 
 @app.post("/webhook")
