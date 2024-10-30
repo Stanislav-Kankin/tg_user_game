@@ -130,26 +130,33 @@
 
         // Функция для анимации астероидов
         function animateAsteroid(asteroid, duration) {
-            asteroid.style.top = '-100px'; // Начальная позиция сверху
-            asteroid.style.transition = `top ${duration}s linear`;
-            asteroid.style.top = '100vh'; // Конечная позиция внизу
+    asteroid.style.top = '-100px'; // Начальная позиция сверху
+    asteroid.style.transition = `top ${duration}s linear`;
+    asteroid.style.top = '100vh'; // Конечная позиция внизу
 
-            const rocketBottom = rocket.offsetTop + rocket.clientHeight + 5; // Позиция ракеты + 5 пикселей
+    const rocketBottom = rocket.offsetTop + rocket.clientHeight + 5; // Позиция ракеты + 5 пикселей
 
-            const checkPosition = setInterval(() => {
-                const currentAsteroidBottom = asteroid.offsetTop + asteroid.clientHeight;
-                if (currentAsteroidBottom >= rocketBottom) {
-                    clearInterval(checkPosition);
-                    setTimeout(() => {
-                        asteroid.style.top = '-100px'; // Сброс позиции
-                        asteroid.style.transition = ''; // Сброс анимации
-                        setTimeout(() => {
-                            animateAsteroid(asteroid, duration); // Рекурсивный вызов для повторения анимации
-                        }, 100); // Задержка перед повторным запуском анимации
-                    }, 100); // Задержка перед сбросом позиции
-                }
-            }, 100); // Интервал проверки положения
+    const checkPosition = setInterval(() => {
+        const currentAsteroidBottom = asteroid.offsetTop + asteroid.clientHeight;
+
+        if (currentAsteroidBottom >= rocketBottom) {
+            clearInterval(checkPosition);
+            asteroid.style.opacity = '0'; // Скрыть астероид
+
+            // Задержка перед сбросом позиции
+            setTimeout(() => {
+                asteroid.style.top = '-100px'; // Сброс позиции
+                asteroid.style.transition = ''; // Сброс анимации
+                asteroid.style.opacity = '1'; // Показать астероид
+
+                // Запуск новой анимации с задержкой
+                setTimeout(() => {
+                    animateAsteroid(asteroid, duration); // Рекурсивный вызов для повторения анимации
+                }, 100); // Задержка перед повторным запуском анимации
+            }, 1000); // Задержка до появления новых астероидов
         }
+    }, 100); // Интервал проверки положения
+}
 
         // Запуск анимации астероидов
         const asteroid1 = document.querySelector(".asteroid1");
