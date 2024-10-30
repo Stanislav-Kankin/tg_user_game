@@ -133,19 +133,27 @@
             asteroid.style.top = '-100px'; // Начальная позиция сверху
             asteroid.style.transition = `top ${duration}s linear`;
             asteroid.style.top = '100vh'; // Конечная позиция внизу
-            setTimeout(() => {
-                asteroid.style.top = '-100px'; // Сброс позиции
-                setTimeout(() => {
-                    animateAsteroid(asteroid, duration); // Рекурсивный вызов для повторения анимации
-                }, 100); // Задержка перед повторным запуском анимации
-            }, duration * 1000);
+
+            const rocketBottom = rocket.offsetTop + rocket.clientHeight;
+            const asteroidBottom = asteroid.offsetTop + asteroid.clientHeight;
+
+            const checkPosition = setInterval(() => {
+                const currentAsteroidBottom = asteroid.offsetTop + asteroid.clientHeight;
+                if (currentAsteroidBottom >= rocketBottom) {
+                    clearInterval(checkPosition);
+                    setTimeout(() => {
+                        asteroid.style.top = '-100px'; // Сброс позиции
+                        animateAsteroid(asteroid, duration); // Рекурсивный вызов для повторения анимации
+                    }, 100); // Задержка перед повторным запуском анимации
+                }
+            }, 100); // Интервал проверки положения
         }
 
         // Запуск анимации астероидов
         const asteroid1 = document.querySelector(".asteroid1");
         const asteroid2 = document.querySelector(".asteroid2");
-        animateAsteroid(asteroid1, 4);
-        animateAsteroid(asteroid2, 7);
+        animateAsteroid(asteroid1, 8);
+        animateAsteroid(asteroid2, 12);
     </script>
 </body>
 
