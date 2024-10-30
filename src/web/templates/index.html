@@ -15,10 +15,10 @@
             <div class="button-group">
                 <img src="{{ url_for('static', path='images/rocket.gif') }}" alt="Rocket" class="game-button" id="rocket">
             </div>
-            <div class="control-buttons">
-                <img src="{{ url_for('static', path='images/arr.png') }}" alt="Left Arrow" class="arrow left-arrow" id="left-arrow">
-                <img src="{{ url_for('static', path='images/arr.png') }}" alt="Right Arrow" class="arrow right-arrow" id="right-arrow">
-            </div>
+        </div>
+        <div class="control-buttons">
+            <img src="{{ url_for('static', path='images/arr.png') }}" alt="Left Arrow" class="arrow left-arrow" id="left-arrow">
+            <img src="{{ url_for('static', path='images/arr.png') }}" alt="Right Arrow" class="arrow right-arrow" id="right-arrow">
         </div>
     </div>
 
@@ -52,13 +52,21 @@
         let rocketPosition = 0;
         const step = 10; // Шаг перемещения ракеты
         let moveInterval;
+        const containerWidth = document.querySelector(".container").clientWidth;
+        const rocketWidth = rocket.clientWidth;
 
         function startMove(direction) {
             moveInterval = setInterval(() => {
                 if (direction === 'left') {
                     rocketPosition -= step;
+                    if (rocketPosition < -rocketWidth / 2) {
+                        rocketPosition = -rocketWidth / 2;
+                    }
                 } else if (direction === 'right') {
                     rocketPosition += step;
+                    if (rocketPosition > containerWidth - rocketWidth / 2) {
+                        rocketPosition = containerWidth - rocketWidth / 2;
+                    }
                 }
                 rocket.style.transform = `translateX(${rocketPosition}px)`;
             }, 50); // Интервал обновления позиции
