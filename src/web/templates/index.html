@@ -134,7 +134,7 @@
             asteroid.style.transition = `top ${duration}s linear`;
             asteroid.style.top = '100vh'; // Конечная позиция внизу
 
-            const rocketBottom = rocket.offsetTop + rocket.clientHeight;
+            const rocketBottom = rocket.offsetTop + rocket.clientHeight + 5; // Позиция ракеты + 5 пикселей
 
             const checkPosition = setInterval(() => {
                 const currentAsteroidBottom = asteroid.offsetTop + asteroid.clientHeight;
