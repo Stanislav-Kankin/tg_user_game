@@ -54,18 +54,23 @@
         let moveInterval;
         const containerWidth = document.querySelector(".container").clientWidth;
         const rocketWidth = rocket.clientWidth;
+        const maxMovement = 250; // Максимальное расстояние для движения вправо и влево
+
+        // Устанавливаем начальное положение ракеты в центре экрана
+        rocket.style.transform = `translateX(${containerWidth / 2 - rocketWidth / 2}px)`;
+        rocketPosition = containerWidth / 2 - rocketWidth / 2;
 
         function startMove(direction) {
             moveInterval = setInterval(() => {
                 if (direction === 'left') {
                     rocketPosition -= step;
-                    if (rocketPosition < -rocketWidth / 2) {
-                        rocketPosition = -rocketWidth / 2;
+                    if (rocketPosition < containerWidth / 2 - rocketWidth / 2 - maxMovement) {
+                        rocketPosition = containerWidth / 2 - rocketWidth / 2 - maxMovement;
                     }
                 } else if (direction === 'right') {
                     rocketPosition += step;
-                    if (rocketPosition > containerWidth - rocketWidth / 2) {
-                        rocketPosition = containerWidth - rocketWidth / 2;
+                    if (rocketPosition > containerWidth / 2 - rocketWidth / 2 + maxMovement) {
+                        rocketPosition = containerWidth / 2 - rocketWidth / 2 + maxMovement;
                     }
                 }
                 rocket.style.transform = `translateX(${rocketPosition}px)`;
@@ -100,7 +105,8 @@
             stopMove();
         });
 
-        leftArrow.addEventListener("touchstart", () => {
+        leftArrow.addEventListener("touchstart", (e) => {
+            e.preventDefault(); // Отключаем контекстное меню
             startMove('left');
         });
 
@@ -108,7 +114,8 @@
             stopMove();
         });
 
-        rightArrow.addEventListener("touchstart", () => {
+        rightArrow.addEventListener("touchstart", (e) => {
+            e.preventDefault(); // Отключаем контекстное меню
             startMove('right');
         });
 
