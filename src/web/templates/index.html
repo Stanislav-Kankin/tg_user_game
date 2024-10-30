@@ -130,26 +130,37 @@
 
         // Функция для анимации астероидов
         function animateAsteroid(asteroid, duration) {
-    asteroid.style.top = '-100px'; // Начальная позиция сверху
-    asteroid.style.transition = `top ${duration}s linear`;
-    asteroid.style.top = '100vh'; // Конечная позиция внизу
+    // Устанавливаем начальное состояние астероида
+    asteroid.style.opacity = '1'; // Убедитесь, что астероид видимый
 
+    // Сначала сбрасываем позицию астероида выше экрана
+    asteroid.style.top = '-100px'; 
+    asteroid.style.transition = `top ${duration}s linear`; // Задаем продолжительность анимации
+    
+    // Убедитесь, что астероид плавно перемещается вниз
+    setTimeout(() => {
+        asteroid.style.top = '100vh'; // Перемещение астероида вниз экрана
+    }, 100); // Немного задержка перед началом перемещения
+
+    // Рассчитываем позицию ракеты
     const rocketBottom = rocket.offsetTop + rocket.clientHeight + 5; // Позиция ракеты + 5 пикселей
 
+    // Устанавливаем интервал для проверки положения астероида
     const checkPosition = setInterval(() => {
         const currentAsteroidBottom = asteroid.offsetTop + asteroid.clientHeight;
 
+        // Если астероид достиг уровня ракеты
         if (currentAsteroidBottom >= rocketBottom) {
-            clearInterval(checkPosition);
+            clearInterval(checkPosition); // Очищаем интервал проверки
             asteroid.style.opacity = '0'; // Скрыть астероид
 
             // Задержка перед сбросом позиции
             setTimeout(() => {
                 asteroid.style.top = '-100px'; // Сброс позиции
                 asteroid.style.transition = ''; // Сброс анимации
-                asteroid.style.opacity = '1'; // Показать астероид
+                asteroid.style.opacity = '1'; // Вернуть видимость астероида
 
-                // Запуск новой анимации с задержкой
+                // Запускаем новую анимацию после задержки
                 setTimeout(() => {
                     animateAsteroid(asteroid, duration); // Рекурсивный вызов для повторения анимации
                 }, 100); // Задержка перед повторным запуском анимации
@@ -158,11 +169,12 @@
     }, 100); // Интервал проверки положения
 }
 
-        // Запуск анимации астероидов
-        const asteroid1 = document.querySelector(".asteroid1");
-        const asteroid2 = document.querySelector(".asteroid2");
-        animateAsteroid(asteroid1, 8);
-        animateAsteroid(asteroid2, 12);
+// Запуск анимации астероидов
+const asteroid1 = document.querySelector(".asteroid1");
+const asteroid2 = document.querySelector(".asteroid2");
+animateAsteroid(asteroid1, 8);
+animateAsteroid(asteroid2, 12);
+
     </script>
 </body>
 
