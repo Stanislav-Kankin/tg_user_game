@@ -13,8 +13,11 @@
         <img src="{{ url_for('static', path='images/bg_blue.png') }}" alt="Background" class="background">
         <div class="buttons">
             <div class="button-group">
-                <img src="{{ url_for('static', path='images/rocket.gif') }}" alt="Play Game" class="game-button" id="play-game">
-                <p class="button-label">Play</p>
+                <img src="{{ url_for('static', path='images/rocket.gif') }}" alt="Rocket" class="game-button" id="rocket">
+            </div>
+            <div class="control-buttons">
+                <button id="left-button">←</button>
+                <button id="right-button">→</button>
             </div>
         </div>
     </div>
@@ -42,49 +45,21 @@
             }
         }
 
-        const rocket = document.querySelector("#play-game");
-        let isDragging = false;
-        let startX;
-        let scrollLeft;
+        const rocket = document.querySelector("#rocket");
+        const leftButton = document.querySelector("#left-button");
+        const rightButton = document.querySelector("#right-button");
 
-        rocket.addEventListener("mousedown", (e) => {
-            isDragging = true;
-            startX = e.pageX - rocket.offsetLeft;
-            scrollLeft = rocket.scrollLeft;
+        let rocketPosition = 0;
+        const step = 10; // Шаг перемещения ракеты
+
+        leftButton.addEventListener("click", () => {
+            rocketPosition -= step;
+            rocket.style.transform = `translateX(${rocketPosition}px)`;
         });
 
-        rocket.addEventListener("mouseleave", () => {
-            isDragging = false;
-        });
-
-        rocket.addEventListener("mouseup", () => {
-            isDragging = false;
-        });
-
-        rocket.addEventListener("mousemove", (e) => {
-            if (!isDragging) return;
-            e.preventDefault();
-            const x = e.pageX - rocket.offsetLeft;
-            const walk = (x - startX) * 1; //scroll-fast
-            rocket.scrollLeft = scrollLeft - walk;
-        });
-
-        rocket.addEventListener("touchstart", (e) => {
-            isDragging = true;
-            startX = e.touches[0].pageX - rocket.offsetLeft;
-            scrollLeft = rocket.scrollLeft;
-        });
-
-        rocket.addEventListener("touchmove", (e) => {
-            if (!isDragging) return;
-            e.preventDefault();
-            const x = e.touches[0].pageX - rocket.offsetLeft;
-            const walk = (x - startX) * 1; //scroll-fast
-            rocket.scrollLeft = scrollLeft - walk;
-        });
-
-        rocket.addEventListener("touchend", () => {
-            isDragging = false;
+        rightButton.addEventListener("click", () => {
+            rocketPosition += step;
+            rocket.style.transform = `translateX(${rocketPosition}px)`;
         });
     </script>
 </body>
