@@ -134,12 +134,12 @@
             asteroid.style.transition = `top ${duration}s linear`;
             asteroid.style.top = '100vh'; // Конечная позиция внизу
 
-            const rocketBottom = rocket.offsetTop + rocket.clientHeight;
-            const asteroidBottom = asteroid.offsetTop + asteroid.clientHeight;
+            const rocketLeft = rocket.offsetLeft + rocket.clientWidth / 2;
+            const asteroidLeft = asteroid.offsetLeft + asteroid.clientWidth / 2;
 
             const checkPosition = setInterval(() => {
-                const currentAsteroidBottom = asteroid.offsetTop + asteroid.clientHeight;
-                if (currentAsteroidBottom >= rocketBottom) {
+                const currentAsteroidLeft = asteroid.offsetLeft + asteroid.clientWidth / 2;
+                if (currentAsteroidLeft >= rocketLeft - 50 && currentAsteroidLeft <= rocketLeft + 50) {
                     clearInterval(checkPosition);
                     setTimeout(() => {
                         asteroid.style.top = '-100px'; // Сброс позиции
