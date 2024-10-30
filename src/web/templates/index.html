@@ -16,8 +16,8 @@
                 <img src="{{ url_for('static', path='images/rocket.gif') }}" alt="Rocket" class="game-button" id="rocket">
             </div>
             <div class="control-buttons">
-                <button id="left-button">←</button>
-                <button id="right-button">→</button>
+                <img src="{{ url_for('static', path='images/arr.png') }}" alt="Left Arrow" class="arrow left-arrow" id="left-arrow">
+                <img src="{{ url_for('static', path='images/arr.png') }}" alt="Right Arrow" class="arrow right-arrow" id="right-arrow">
             </div>
         </div>
     </div>
@@ -46,18 +46,18 @@
         }
 
         const rocket = document.querySelector("#rocket");
-        const leftButton = document.querySelector("#left-button");
-        const rightButton = document.querySelector("#right-button");
+        const leftArrow = document.querySelector("#left-arrow");
+        const rightArrow = document.querySelector("#right-arrow");
 
         let rocketPosition = 0;
         const step = 10; // Шаг перемещения ракеты
 
-        leftButton.addEventListener("click", () => {
+        leftArrow.addEventListener("click", () => {
             rocketPosition -= step;
             rocket.style.transform = `translateX(${rocketPosition}px)`;
         });
 
-        rightButton.addEventListener("click", () => {
+        rightArrow.addEventListener("click", () => {
             rocketPosition += step;
             rocket.style.transform = `translateX(${rocketPosition}px)`;
         });
