@@ -143,8 +143,11 @@
                     clearInterval(checkPosition);
                     setTimeout(() => {
                         asteroid.style.top = '-100px'; // Сброс позиции
-                        animateAsteroid(asteroid, duration); // Рекурсивный вызов для повторения анимации
-                    }, 100); // Задержка перед повторным запуском анимации
+                        asteroid.style.transition = ''; // Сброс анимации
+                        setTimeout(() => {
+                            animateAsteroid(asteroid, duration); // Рекурсивный вызов для повторения анимации
+                        }, 100); // Задержка перед повторным запуском анимации
+                    }, 100); // Задержка перед сбросом позиции
                 }
             }, 100); // Интервал проверки положения
         }
