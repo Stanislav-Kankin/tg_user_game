@@ -130,7 +130,7 @@
 
         // Функция для анимации астероидов
         function animateAsteroid(asteroid, duration) {
-    asteroid.style.top = '-100px'; // Начальная позиция сверху
+    asteroid.style.top = '0px'; // Начальная позиция сверху
     asteroid.style.transition = `top ${duration}s linear`;
     asteroid.style.top = '100vh'; // Конечная позиция внизу
 
@@ -155,15 +155,15 @@
                 }, 100); // Задержка перед повторным запуском анимации
             }, 1000); // Задержка до появления новых астероидов
         }
-    }, 450); // Интервал проверки положения
+    }, 100); // Интервал проверки положения
 }
 
 
         // Запуск анимации астероидов
         const asteroid1 = document.querySelector(".asteroid1");
         const asteroid2 = document.querySelector(".asteroid2");
-        animateAsteroid(asteroid1, 8);
-        animateAsteroid(asteroid2, 12);
+        animateAsteroid(asteroid1, 3);
+        animateAsteroid(asteroid2, 7);
     </script>
 </body>
 
