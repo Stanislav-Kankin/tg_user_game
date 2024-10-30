@@ -5,42 +5,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game</title>
-    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <div class="container">
-        <img src="{{ url_for('static', path='images/bg_blue.png') }}" alt="Background" class="background">
+        <img src="images/bg_blue.png" alt="Background" class="background">
         <div class="buttons">
             <div class="button-group">
-                <img src="{{ url_for('static', path='images/rocket.gif') }}" alt="Play Game" class="game-button" id="rocket">
+                <img src="images/rocket.gif" alt="Play Game" class="game-button" id="rocket">
             </div>
         </div>
     </div>
 
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        const tg = window.Telegram.WebApp;
-        const defaultUrl = "https://1ea4-147-45-193-130.ngrok-free.app"; // TUNNEL!!!
-
-        tg.headerColor = "#fff";
-        tg.expand();
-
-        async function fetchData(endpoint, data) {
-            try {
-                const response = await fetch(`${defaultUrl}/${endpoint}`, {
-                    method: "POST",
-                    headers: { Authentication: tg.initData },
-                    body: JSON.stringify(data)
-                });
-                const responseData = await response.json();
-                return responseData;
-            } catch (error) {
-                console.error(`Error: ${error}`);
-                throw error;
-            }
-        }
-
         const rocket = document.querySelector("#rocket");
         let isDragging = false;
         let startX;
