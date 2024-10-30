@@ -58,6 +58,7 @@
         let moveInterval;
         const container = document.querySelector(".container");
         const containerWidth = container.clientWidth;
+        console.log(containerWidth);
         const rocketWidth = rocket.clientWidth;
         const maxMovement = 100; // Максимальное расстояние для движения вправо и влево
 
@@ -99,7 +100,7 @@
         });
 
         rightArrow.addEventListener("mousedown", () => {
-            startMove('right');
+            // startMove('right');
         });
 
         rightArrow.addEventListener("mouseup", () => {
@@ -121,7 +122,7 @@
 
         rightArrow.addEventListener("touchstart", (e) => {
             e.preventDefault(); // Отключаем контекстное меню
-            startMove('right');
+            // startMove('right');
         });
 
         rightArrow.addEventListener("touchend", () => {
