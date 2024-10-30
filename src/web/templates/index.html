@@ -13,8 +13,7 @@
         <img src="{{ url_for('static', path='images/bg_blue.png') }}" alt="Background" class="background">
         <div class="buttons">
             <div class="button-group">
-                <img src="{{ url_for('static', path='images/rocket.gif') }}" alt="Play Game" class="game-button" id="play-game">
-                <p class="button-label">Play</p>
+                <img src="{{ url_for('static', path='images/rocket.gif') }}" alt="Play Game" class="game-button" id="rocket">
             </div>
         </div>
     </div>
@@ -42,45 +41,43 @@
             }
         }
 
-        const rocket = document.querySelector("#play-game");
+        const rocket = document.querySelector("#rocket");
         let isDragging = false;
         let startX;
-        let scrollLeft;
+        let startLeft;
 
         rocket.addEventListener("mousedown", (e) => {
             isDragging = true;
-            startX = e.pageX - rocket.offsetLeft;
-            scrollLeft = rocket.scrollLeft;
+            startX = e.clientX;
+            startLeft = rocket.offsetLeft;
         });
 
-        rocket.addEventListener("mouseleave", () => {
-            isDragging = false;
+        rocket.addEventListener("mousemove", (e) => {
+            if (!isDragging) return;
+            const x = e.clientX;
+            const walk = x - startX;
+            rocket.style.left = `${startLeft + walk}px`;
         });
 
         rocket.addEventListener("mouseup", () => {
             isDragging = false;
         });
 
-        rocket.addEventListener("mousemove", (e) => {
-            if (!isDragging) return;
-            e.preventDefault();
-            const x = e.pageX - rocket.offsetLeft;
-            const walk = (x - startX) * 1; //scroll-fast
-            rocket.scrollLeft = scrollLeft - walk;
+        rocket.addEventListener("mouseleave", () => {
+            isDragging = false;
         });
 
         rocket.addEventListener("touchstart", (e) => {
             isDragging = true;
-            startX = e.touches[0].pageX - rocket.offsetLeft;
-            scrollLeft = rocket.scrollLeft;
+            startX = e.touches[0].clientX;
+            startLeft = rocket.offsetLeft;
         });
 
         rocket.addEventListener("touchmove", (e) => {
             if (!isDragging) return;
-            e.preventDefault();
-            const x = e.touches[0].pageX - rocket.offsetLeft;
-            const walk = (x - startX) * 1; //scroll-fast
-            rocket.scrollLeft = scrollLeft - walk;
+            const x = e.touches[0].clientX;
+            const walk = x - startX;
+            rocket.style.left = `${startLeft + walk}px`;
         });
 
         rocket.addEventListener("touchend", () => {
