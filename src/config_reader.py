@@ -14,7 +14,7 @@ class Config(BaseSettings):
     BOT_TOKEN: SecretStr  # Токен бота
     DB_URL: SecretStr  # URL базы данных
 
-    WEBAPP_URL: str = "https://1ea4-147-45-193-130.ngrok-free.app"  # URL веб-приложения (туннель)
+    WEBAPP_URL: str = "https://38f6-147-45-193-130.ngrok-free.app"  # URL веб-приложения (туннель)
 
     CURRENT_DIR: str = os.path.dirname(os.path.abspath(__file__))  # Текущая директория
     TEMPLATES_PATH: str = os.path.join(current_dir, "web", "templates")  # Путь к шаблонам
