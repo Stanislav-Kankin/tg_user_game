@@ -56,9 +56,10 @@
         let rocketPosition = 0;
         const step = 10; // Шаг перемещения ракеты
         let moveInterval;
-        const containerWidth = document.querySelector(".container").clientWidth;
+        const container = document.querySelector(".container");
+        const containerWidth = container.clientWidth;
         const rocketWidth = rocket.clientWidth;
-        const maxMovement = 250; // Максимальное расстояние для движения вправо и влево
+        const maxMovement = 100; // Максимальное расстояние для движения вправо и влево
 
         // Устанавливаем начальное положение ракеты в центре экрана
         rocket.style.transform = `translateX(${containerWidth / 2 - rocketWidth / 2}px)`;
@@ -143,8 +144,8 @@
         // Запуск анимации астероидов
         const asteroid1 = document.querySelector(".asteroid1");
         const asteroid2 = document.querySelector(".asteroid2");
-        animateAsteroid(asteroid1, 8);
-        animateAsteroid(asteroid2, 12);
+        animateAsteroid(asteroid1, 4);
+        animateAsteroid(asteroid2, 7);
     </script>
 </body>
 
