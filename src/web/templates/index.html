@@ -60,7 +60,7 @@
         const containerWidth = container.clientWidth;
         console.log(containerWidth);
         const rocketWidth = rocket.clientWidth;
-        const maxMovement = 100; // Максимальное расстояние для движения вправо и влево
+        const maxMovement = containerWidth / 2 - rocketWidth / 2; // Максимальное расстояние для движения вправо и влево
 
         // Устанавливаем начальное положение ракеты в центре экрана
         rocket.style.transform = `translateX(${containerWidth / 2 - rocketWidth / 2}px)`;
