@@ -53,13 +53,13 @@
         const leftArrow = document.querySelector("#left-arrow");
         const rightArrow = document.querySelector("#right-arrow");
 
-        let rocketPosition = -100;
-        const step = 5; // Шаг перемещения ракеты
+        let rocketPosition = 0;
+        const step = 10; // Шаг перемещения ракеты
         let moveInterval;
         const container = document.querySelector(".container");
         const containerWidth = container.clientWidth;
         const rocketWidth = rocket.clientWidth;
-        const maxMovement = 50; // Максимальное расстояние для движения вправо и влево
+        const maxMovement = 100; // Максимальное расстояние для движения вправо и влево
 
         // Устанавливаем начальное положение ракеты в центре экрана
         rocket.style.transform = `translateX(${containerWidth / 2 - rocketWidth / 2}px)`;
@@ -135,7 +135,6 @@
             asteroid.style.top = '100vh'; // Конечная позиция внизу
 
             const rocketBottom = rocket.offsetTop + rocket.clientHeight;
-            const asteroidBottom = asteroid.offsetTop + asteroid.clientHeight;
 
             const checkPosition = setInterval(() => {
                 const currentAsteroidBottom = asteroid.offsetTop + asteroid.clientHeight;
