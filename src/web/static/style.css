@@ -22,17 +22,19 @@ body, html {
     background-image: url('../static/images/bg_star.jpg'); /* Устанавливаем фоновое изображение */
     background-size: cover; /* Задаем размер фона, чтобы он покрывал весь элемент */
     background-position: center; /* Центрируем фоновое изображение */
-    animation: moveBackground 10s linear infinite; /* Устанавливаем анимацию для движения фона */
     background-color: red; /* Задаем цвет фона */
 }
 
-@keyframes moveBackground {
-    0% {
-        transform: translateY(0); /* Начальная позиция фона */
-    }
-    100% {
-        transform: translateY(50%); /* Конечная позиция фона, сдвинутая на 50% вниз */
-    }
+#background2 {
+    position: absolute; /* Устанавливаем абсолютное позиционирование для второго фона */
+    top: -100%; /* Задаем верхнюю позицию второго фона */
+    left: 0; /* Задаем левую позицию второго фона */
+    width: 100%; /* Задаем ширину второго фона на 100% от родительского элемента */
+    height: 200%; /* Удваиваем высоту второго фона для создания эффекта бесконечного движения */
+    background-image: url('../static/images/bg_star.jpg'); /* Устанавливаем фоновое изображение */
+    background-size: cover; /* Задаем размер фона, чтобы он покрывал весь элемент */
+    background-position: center; /* Центрируем фоновое изображение */
+    background-color: red; /* Задаем цвет фона */
 }
 
 #rocket {

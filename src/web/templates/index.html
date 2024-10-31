@@ -19,6 +19,8 @@
             const gameContainer = document.getElementById('game-container');
             const scoreDisplay = document.getElementById('score');
             const levelDisplay = document.getElementById('level');
+            const background = document.getElementById('background');
+            const background2 = document.getElementById('background2');
             let score = 0;
             let level = 1;
             let gameOver = false;
@@ -189,18 +191,34 @@
                 }, 1000);
             }
 
+            function moveBackground() {
+                let position = 0;
+                setInterval(() => {
+                    position += 1; // Измените значение на положительное для движения вниз
+                    background.style.transform = `translateY(${position}px)`;
+                    background2.style.transform = `translateY(${position - 100}%)`;
+
+                    if (position >= 100) {
+                        position = 0;
+                    }
+                }, 20); // Увеличьте значение для более медленного движения
+            }
+
             setInterval(checkCollision, 100);
 
             moveAsteroid(asteroid1, 4);
             moveAsteroid(asteroid2, 6);
             moveAsteroid(asteroid3, 7);
             moveAsteroid(asteroid4, 9);
+
+            moveBackground();
         });
     </script>
 </head>
 <body>
     <div id="game-container">
         <div id="background"></div>
+        <div id="background2"></div>
         <div id="score" style="position: absolute; top: 10px; left: 10px; font-size: 20px; color: white;">Score: 0</div>
         <div id="level" style="position: absolute; top: 10px; right: 10px; font-size: 20px; color: white;">Level: 1</div>
         <img id="rocket" src="../static/images/rocket.gif" alt="Rocket">
