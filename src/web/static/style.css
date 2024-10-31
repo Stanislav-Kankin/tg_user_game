@@ -1,60 +1,60 @@
 body, html {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
+    margin: 0; /* Убираем внешние отступы у body и html */
+    padding: 0; /* Убираем внутренние отступы у body и html */
+    width: 100%; /* Задаем ширину body и html на 100% от окна браузера */
+    height: 100%; /* Задаем высоту body и html на 100% от окна браузера */
+    overflow: hidden; /* Скрываем полосы прокрутки */
 }
 
 #game-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
+    position: relative; /* Устанавливаем относительное позиционирование для контейнера игры */
+    width: 100%; /* Задаем ширину контейнера игры на 100% от родительского элемента */
+    height: 100%; /* Задаем высоту контейнера игры на 100% от родительского элемента */
+    overflow: hidden; /* Скрываем полосы прокрутки внутри контейнера игры */
 }
 
 #background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 200%; /* Удваиваем высоту для создания эффекта бесконечного движения */
-    background-image: url('../static/images/bg_star.jpg');
-    background-size: cover;
-    background-position: center;
-    animation: moveBackground 10s linear infinite;
+    position: absolute; /* Устанавливаем абсолютное позиционирование для фона */
+    top: 0; /* Задаем верхнюю позицию фона */
+    left: 0; /* Задаем левую позицию фона */
+    width: 100%; /* Задаем ширину фона на 100% от родительского элемента */
+    height: 200%; /* Удваиваем высоту фона для создания эффекта бесконечного движения */
+    background-image: url('../static/images/bg_star.jpg'); /* Устанавливаем фоновое изображение */
+    background-size: cover; /* Задаем размер фона, чтобы он покрывал весь элемент */
+    background-position: center; /* Центрируем фоновое изображение */
+    animation: moveBackground 10s linear infinite; /* Устанавливаем анимацию для движения фона */
     background-color: red; /* Задаем цвет фона */
 }
 
 @keyframes moveBackground {
     0% {
-        transform: translateY(0);
+        transform: translateY(0); /* Начальная позиция фона */
     }
     100% {
-        transform: translateY(-50%);
+        transform: translateY(-50%); /* Конечная позиция фона, сдвинутая на 50% вверх */
     }
 }
 
 #rocket {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100px;
-    height: auto;
-    cursor: pointer;
+    position: absolute; /* Устанавливаем абсолютное позиционирование для ракеты */
+    bottom: 0; /* Задаем нижнюю позицию ракеты */
+    left: 50%; /* Задаем левую позицию ракеты на 50% от ширины родительского элемента */
+    transform: translateX(-50%); /* Сдвигаем ракету влево на 50% от ее ширины для центрирования */
+    width: 100px; /* Задаем ширину ракеты */
+    height: auto; /* Задаем автоматическую высоту ракеты */
+    cursor: pointer; /* Изменяем курсор на указатель при наведении на ракету */
 }
 
 .asteroid {
-    position: absolute;
-    top: -50px;
-    width: 50px;
-    height: auto;
+    position: absolute; /* Устанавливаем абсолютное позиционирование для астероидов */
+    top: -50px; /* Задаем верхнюю позицию астероидов */
+    width: 50px; /* Задаем ширину астероидов */
+    height: auto; /* Задаем автоматическую высоту астероидов */
 }
 
 .message {
-    position: absolute;
-    font-size: 20px;
-    font-weight: bold;
-    transition: opacity 1s ease-out;
+    position: absolute; /* Устанавливаем абсолютное позиционирование для сообщений */
+    font-size: 20px; /* Задаем размер шрифта сообщений */
+    font-weight: bold; /* Задаем жирный шрифт для сообщений */
+    transition: opacity 1s ease-out; /* Устанавливаем плавное изменение прозрачности сообщений */
 }
