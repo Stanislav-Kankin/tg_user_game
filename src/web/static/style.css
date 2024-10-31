@@ -23,6 +23,7 @@ body, html {
     background-size: cover;
     background-position: center;
     animation: moveBackground 10s linear infinite;
+    background-color: red; /* Задаем цвет фона */
 }
 
 @keyframes moveBackground {
