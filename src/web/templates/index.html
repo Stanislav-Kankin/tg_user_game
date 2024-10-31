@@ -18,6 +18,7 @@
             const asteroid4 = document.getElementById('asteroid4');
             const gameContainer = document.getElementById('game-container');
             const scoreDisplay = document.getElementById('score');
+            const levelDisplay = document.getElementById('level');
             let score = 0;
             let level = 1;
 
@@ -87,10 +88,10 @@
                 const asteroid4Rect = asteroid4.getBoundingClientRect();
 
                 const asteroids = [
-                    { element: asteroid1, rect: asteroid1Rect, delay: 4 },
-                    { element: asteroid2, rect: asteroid2Rect, delay: 6 },
-                    { element: asteroid3, rect: asteroid3Rect, delay: 7 },
-                    { element: asteroid4, rect: asteroid4Rect, delay: 9 }
+                    { element: asteroid1, rect: asteroid1Rect, delay: 4, scored: false },
+                    { element: asteroid2, rect: asteroid2Rect, delay: 6, scored: false },
+                    { element: asteroid3, rect: asteroid3Rect, delay: 7, scored: false },
+                    { element: asteroid4, rect: asteroid4Rect, delay: 9, scored: false }
                 ];
 
                 asteroids.forEach(asteroid => {
@@ -101,23 +102,41 @@
                         rocketCenterY + 25 > asteroid.rect.top
                     ) {
                         asteroid.element.style.display = 'none';
-                        showMessage(asteroid.rect.left, asteroid.rect.top, '- 10', 'red');
-                        score -= 10;
+                        showMessage(asteroid.rect.left, asteroid.rect.top, '-50', 'red');
+                        score -= 50;
                         setTimeout(() => {
                             asteroid.element.style.display = 'block';
                         }, asteroid.delay * 1000);
-                    } else if (asteroid.rect.bottom >= gameContainer.clientHeight) {
-                        showMessage(asteroid.rect.left, asteroid.rect.top, '+ 5', 'green');
+                    } else if (asteroid.rect.bottom >= gameContainer.clientHeight && !asteroid.scored) {
+                        showMessage(asteroid.rect.left, asteroid.rect.top, '+5', 'green');
                         score += 5;
+                        asteroid.scored = true;
                     }
                 });
 
                 scoreDisplay.innerText = `Score: ${score}`;
+                levelDisplay.innerText = `Level: ${level}`;
+
                 if (score < 0) {
                     rocket.src = '../static/images/explosion.gif'; // Замените на путь к вашему изображению взрыва
                     setTimeout(() => {
                         alert('Game Over!');
-                        location.reload();
+                        const restartButton = document.createElement('button');
+                        restartButton.innerText = 'Restart';
+                        restartButton.style.position = 'absolute';
+                        restartButton.style.top = '50%';
+                        restartButton.style.left = '50%';
+                        restartButton.style.transform = 'translate(-50%, -50%)';
+                        restartButton.style.padding = '10px 20px';
+                        restartButton.style.fontSize = '20px';
+                        restartButton.style.backgroundColor = 'red';
+                        restartButton.style.color = 'white';
+                        restartButton.style.border = 'none';
+                        restartButton.style.cursor = 'pointer';
+                        restartButton.addEventListener('click', () => {
+                            location.reload();
+                        });
+                        gameContainer.appendChild(restartButton);
                     }, 1000);
                 }
 
@@ -159,6 +178,7 @@
 <body>
     <div id="game-container">
         <div id="score" style="position: absolute; top: 10px; left: 10px; font-size: 20px; color: white;">Score: 0</div>
+        <div id="level" style="position: absolute; top: 10px; right: 10px; font-size: 20px; color: white;">Level: 1</div>
         <img id="rocket" src="../static/images/rocket.gif" alt="Rocket">
         <img id="asteroid1" src="../static/images/aster1.png" alt="Asteroid 1" class="asteroid">
         <img id="asteroid2" src="../static/images/aster2.png" alt="Asteroid 2" class="asteroid">
