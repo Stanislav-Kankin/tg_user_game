@@ -196,9 +196,9 @@
                 setInterval(() => {
                     position += 1; // Измените значение на положительное для движения вниз
                     background.style.transform = `translateY(${position}px)`;
-                    background2.style.transform = `translateY(${position - 100}%)`;
+                    background2.style.transform = `translateY(${position - gameContainer.clientHeight}px)`;
 
-                    if (position >= 100) {
+                    if (position >= gameContainer.clientHeight) {
                         position = 0;
                     }
                 }, 20); // Увеличьте значение для более медленного движения
