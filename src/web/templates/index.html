@@ -7,10 +7,12 @@
     <link rel="stylesheet" href="../static/style.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
+        // Инициализация Telegram WebApp
         const tg = window.Telegram.WebApp;
         const defaultUrl = "https://3f86-147-45-193-130.ngrok-free.app"; // TUNNEL
 
         document.addEventListener('DOMContentLoaded', () => {
+            // Получение элементов DOM
             const rocket = document.getElementById('rocket');
             const asteroid1 = document.getElementById('asteroid1');
             const asteroid2 = document.getElementById('asteroid2');
@@ -21,6 +23,8 @@
             const levelDisplay = document.getElementById('level');
             const background = document.getElementById('background');
             const background2 = document.getElementById('background2');
+
+            // Инициализация переменных
             let score = 0;
             let level = 1;
             let gameOver = false;
@@ -28,6 +32,7 @@
             let isDragging = false;
             let offsetX, offsetY;
 
+            // Обработка событий мыши для перемещения ракеты
             rocket.addEventListener('mousedown', (e) => {
                 isDragging = true;
                 const rocketRect = rocket.getBoundingClientRect();
@@ -48,6 +53,7 @@
                 isDragging = false;
             });
 
+            // Обработка событий тач для перемещения ракеты
             rocket.addEventListener('touchstart', (e) => {
                 isDragging = true;
                 const touch = e.touches[0];
@@ -70,6 +76,7 @@
                 isDragging = false;
             });
 
+            // Функция для движения астероидов
             function moveAsteroid(asteroid, delay) {
                 if (gameOver) return;
                 asteroid.style.top = '-50px';
@@ -85,6 +92,7 @@
                 }, delay * 1000);
             }
 
+            // Функция для проверки столкновений
             function checkCollision() {
                 if (gameOver) return;
                 const rocketRect = rocket.getBoundingClientRect();
@@ -158,6 +166,7 @@
                 }
             }
 
+            // Функция для отображения сообщений
             function showMessage(left, top, text, color) {
                 const message = document.createElement('div');
                 message.className = 'message';
@@ -176,6 +185,7 @@
                 }, 2000);
             }
 
+            // Функция для отображения взрыва
             function showBoom(left, top) {
                 const boom = document.createElement('img');
                 boom.src = '../static/images/boom.gif';
@@ -191,6 +201,7 @@
                 }, 1000);
             }
 
+            // Функция для движения фона
             function moveBackground() {
                 let position = 0;
                 setInterval(() => {
@@ -204,6 +215,7 @@
                 }, 20); // Увеличьте значение для более медленного движения
             }
 
+            // Запуск игры
             setInterval(checkCollision, 100);
 
             moveAsteroid(asteroid1, 4);
