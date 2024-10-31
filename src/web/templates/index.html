@@ -28,8 +28,9 @@
 
             rocket.addEventListener('mousedown', (e) => {
                 isDragging = true;
-                offsetX = e.clientX - rocket.getBoundingClientRect().left;
-                offsetY = e.clientY - rocket.getBoundingClientRect().top;
+                const rocketRect = rocket.getBoundingClientRect();
+                offsetX = e.clientX - rocketRect.left;
+                offsetY = e.clientY - rocketRect.top;
             });
 
             document.addEventListener('mousemove', (e) => {
@@ -48,8 +49,9 @@
             rocket.addEventListener('touchstart', (e) => {
                 isDragging = true;
                 const touch = e.touches[0];
-                offsetX = touch.clientX - rocket.getBoundingClientRect().left;
-                offsetY = touch.clientY - rocket.getBoundingClientRect().top;
+                const rocketRect = rocket.getBoundingClientRect();
+                offsetX = touch.clientX - rocketRect.left;
+                offsetY = touch.clientY - rocketRect.top;
             });
 
             document.addEventListener('touchmove', (e) => {
