@@ -120,23 +120,20 @@
                 if (score < 0) {
                     rocket.src = '../static/images/explosion.gif'; // Замените на путь к вашему изображению взрыва
                     setTimeout(() => {
-                        alert('Game Over!');
-                        const restartButton = document.createElement('button');
-                        restartButton.innerText = 'Restart';
-                        restartButton.style.position = 'absolute';
-                        restartButton.style.top = '50%';
-                        restartButton.style.left = '50%';
-                        restartButton.style.transform = 'translate(-50%, -50%)';
-                        restartButton.style.padding = '10px 20px';
-                        restartButton.style.fontSize = '20px';
-                        restartButton.style.backgroundColor = 'red';
-                        restartButton.style.color = 'white';
-                        restartButton.style.border = 'none';
-                        restartButton.style.cursor = 'pointer';
-                        restartButton.addEventListener('click', () => {
+                        const gameOver = document.createElement('div');
+                        gameOver.style.position = 'absolute';
+                        gameOver.style.top = '40%';
+                        gameOver.style.left = '50%';
+                        gameOver.style.transform = 'translate(-50%, -50%)';
+                        gameOver.style.fontSize = '30px';
+                        gameOver.style.color = 'white';
+                        gameOver.style.textAlign = 'center';
+                        gameOver.innerHTML = '<img src="../static/images/skull.png" alt="Game Over"><br>Game Over!<br><button id="restartButton"><img src="../static/images/restart.png" alt="Restart"></button>';
+                        gameContainer.appendChild(gameOver);
+
+                        document.getElementById('restartButton').addEventListener('click', () => {
                             location.reload();
                         });
-                        gameContainer.appendChild(restartButton);
                     }, 1000);
                 }
 
@@ -144,6 +141,7 @@
                     level++;
                     asteroids.forEach(asteroid => {
                         asteroid.delay = asteroid.delay / 1.5;
+                        asteroid.scored = false; // Сброс флага scored при переходе на новый уровень
                     });
                 }
             }
