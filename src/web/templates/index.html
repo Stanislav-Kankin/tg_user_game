@@ -21,6 +21,7 @@
             const levelDisplay = document.getElementById('level');
             let score = 0;
             let level = 1;
+            let gameOver = false;
 
             let isDragging = false;
             let offsetX, offsetY;
@@ -66,6 +67,7 @@
             });
 
             function moveAsteroid(asteroid, delay) {
+                if (gameOver) return;
                 asteroid.style.top = '-50px';
                 asteroid.style.left = `${Math.random() * (gameContainer.clientWidth - 50)}px`;
                 asteroid.style.transition = `top ${delay}s linear`;
@@ -78,6 +80,7 @@
             }
 
             function checkCollision() {
+                if (gameOver) return;
                 const rocketRect = rocket.getBoundingClientRect();
                 const rocketCenterX = rocketRect.left + rocketRect.width / 2;
                 const rocketCenterY = rocketRect.top + rocketRect.height / 2;
@@ -119,22 +122,19 @@
                 levelDisplay.innerText = `Level: ${level}`;
 
                 if (score < 0) {
+                    gameOver = true;
                     rocket.src = '../static/images/explosion.gif'; // Замените на путь к вашему изображению взрыва
                     setTimeout(() => {
-                        const gameOver = document.createElement('div');
-                        gameOver.style.position = 'absolute';
-                        gameOver.style.top = '40%';
-                        gameOver.style.left = '50%';
-                        gameOver.style.transform = 'translate(-50%, -50%)';
-                        gameOver.style.fontSize = '30px';
-                        gameOver.style.color = 'white';
-                        gameOver.style.textAlign = 'center';
-                        gameOver.innerHTML = '<img src="../static/images/skull.png" alt="Game Over" style="width: 100px; height: 100px;"><br>Game Over!<br><button id="restartButton"><img src="../static/images/restart.png" alt="Restart" style="width: 100px; height: 100px;"></button>';
-                        gameContainer.appendChild(gameOver);
-
-                        document.getElementById('restartButton').addEventListener('click', () => {
-                            location.reload();
-                        });
+                        const gameOverMessage = document.createElement('div');
+                        gameOverMessage.style.position = 'absolute';
+                        gameOverMessage.style.top = '40%';
+                        gameOverMessage.style.left = '50%';
+                        gameOverMessage.style.transform = 'translate(-50%, -50%)';
+                        gameOverMessage.style.fontSize = '30px';
+                        gameOverMessage.style.color = 'white';
+                        gameOverMessage.style.textAlign = 'center';
+                        gameOverMessage.innerHTML = '<img src="../static/images/skull.png" alt="Game Over" style="width: 100px; height: 100px;"><br>Game Over!';
+                        gameContainer.appendChild(gameOverMessage);
                     }, 1000);
                 }
 
