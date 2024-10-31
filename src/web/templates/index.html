@@ -75,6 +75,8 @@
 
                 setTimeout(() => {
                     asteroid.style.transition = 'none';
+                    asteroid.style.display = 'block';
+                    asteroid.scored = false;
                     moveAsteroid(asteroid, delay);
                 }, delay * 1000);
             }
@@ -138,7 +140,7 @@
                     }, 1000);
                 }
 
-                if (score >= 100 * level) {
+                if (score >= 1000 * level) {
                     level++;
                     asteroids.forEach(asteroid => {
                         asteroid.delay = asteroid.delay / 1.5;
