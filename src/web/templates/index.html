@@ -83,7 +83,6 @@
                 if (gameOver) return;
                 const rocketRect = rocket.getBoundingClientRect();
                 const rocketCenterX = rocketRect.left + rocketRect.width / 2;
-
                 const rocketCenterY = rocketRect.top + rocketRect.height / 2;
 
                 const asteroid1Rect = asteroid1.getBoundingClientRect();
@@ -91,30 +90,115 @@
                 const asteroid3Rect = asteroid3.getBoundingClientRect();
                 const asteroid4Rect = asteroid4.getBoundingClientRect();
 
-                // Действие проверки коллизии здесь
-                // Добавьте логику обработки коллизий и обновления счета игры
+                const asteroids = [
+                    { element: asteroid1, rect: asteroid1Rect, delay: 4, scored: false },
+                    { element: asteroid2, rect: asteroid2Rect, delay: 6, scored: false },
+                    { element: asteroid3, rect: asteroid3Rect, delay: 7, scored: false },
+                    { element: asteroid4, rect: asteroid4Rect, delay: 9, scored: false }
+                ];
+
+                asteroids.forEach(asteroid => {
+                    if (
+                        rocketCenterX - 25 < asteroid.rect.right &&
+                        rocketCenterX + 25 > asteroid.rect.left &&
+                        rocketCenterY - 25 < asteroid.rect.bottom &&
+                        rocketCenterY + 25 > asteroid.rect.top
+                    ) {
+                        asteroid.element.style.display = 'none';
+                        showBoom(asteroid.rect.left, asteroid.rect.top);
+                        showMessage(asteroid.rect.left, asteroid.rect.top, '-50', 'red');
+                        score -= 50;
+                        setTimeout(() => {
+                            asteroid.element.style.display = 'block';
+                        }, asteroid.delay * 1000);
+                    } else if (asteroid.rect.bottom >= gameContainer.clientHeight && !asteroid.scored) {
+                        showMessage(asteroid.rect.left, asteroid.rect.top, '+5', 'green');
+                        score += 5;
+                        asteroid.scored = true;
+                    }
+                });
+
+                scoreDisplay.innerText = `Score: ${score}`;
+                levelDisplay.innerText = `Level: ${level}`;
+
+                if (score < 0) {
+                    gameOver = true;
+                    rocket.src = '../static/images/explosion.gif'; // Замените на путь к вашему изображению взрыва
+                    setTimeout(() => {
+                        const gameOverMessage = document.createElement('div');
+                        gameOverMessage.style.position = 'absolute';
+                        gameOverMessage.style.top = '40%';
+                        gameOverMessage.style.left = '50%';
+                        gameOverMessage.style.transform = 'translate(-50%, -50%)';
+                        gameOverMessage.style.fontSize = '30px';
+                        gameOverMessage.style.color = 'white';
+                        gameOverMessage.style.textAlign = 'center';
+                        gameOverMessage.innerHTML = '<img src="../static/images/skull.png" alt="Game Over" style="width: 100px; height: 100px;"><br>Game Over!';
+                        gameContainer.appendChild(gameOverMessage);
+                    }, 1000);
+                }
+
+                if (score >= 100 * level) {
+                    level++;
+                    asteroids.forEach(asteroid => {
+                        asteroid.delay = asteroid.delay / 1.5;
+                        asteroid.scored = false; // Сброс флага scored при переходе на новый уровень
+                    });
+                }
             }
 
-            // Запуск астероидов
-            moveAsteroid(asteroid1, 3);
-            moveAsteroid(asteroid2, 4);
-            moveAsteroid(asteroid3, 2);
-            moveAsteroid(asteroid4, 5);
+            function showMessage(left, top, text, color) {
+                const message = document.createElement('div');
+                message.className = 'message';
+                message.style.left = `${left}px`;
+                message.style.top = `${top}px`;
+                message.style.color = color;
+                message.innerText = text;
+                gameContainer.appendChild(message);
+
+                setTimeout(() => {
+                    message.style.opacity = '0';
+                }, 1000);
+
+                setTimeout(() => {
+                    gameContainer.removeChild(message);
+                }, 2000);
+            }
+
+            function showBoom(left, top) {
+                const boom = document.createElement('img');
+                boom.src = '../static/images/boom.gif';
+                boom.style.position = 'absolute';
+                boom.style.left = `${left}px`;
+                boom.style.top = `${top}px`;
+                boom.style.width = '50px';
+                boom.style.height = '50px';
+                gameContainer.appendChild(boom);
+
+                setTimeout(() => {
+                    gameContainer.removeChild(boom);
+                }, 1000);
+            }
+
+            setInterval(checkCollision, 100);
+
+            moveAsteroid(asteroid1, 4);
+            moveAsteroid(asteroid2, 6);
+            moveAsteroid(asteroid3, 7);
+            moveAsteroid(asteroid4, 9);
         });
     </script>
 </head>
 <body>
     <div id="game-container">
-        <div id="background1"></div>
-        <div id="background2"></div>
-        <div id="rocket"></div>
-        <div id="asteroid1" class="asteroid"></div>
-        <div id="asteroid2" class="asteroid"></div>
-        <div id="asteroid3" class="asteroid"></div>
-        <div id="asteroid4" class="asteroid"></div>
-        <div id="score">Score: 0</div>
-        <div id="level">Level: 1</div>
-        <div class="message" id="game-over-message" style="display: none;">Game Over</div>
+        <div id="background"></div>
+        <div id="score" style="position: absolute; top: 10px; left: 10px; font-size: 20px; color: white;">Score: 0</div>
+        <div id="level" style="position: absolute; top: 10px; right: 10px; font-size: 20px; color: white;">Level: 1</div>
+        <img id="rocket" src="../static/images/rocket.gif" alt="Rocket">
+        <img id="asteroid1" src="../static/images/aster1.png" alt="Asteroid 1" class="asteroid">
+        <img id="asteroid2" src="../static/images/aster2.png" alt="Asteroid 2" class="asteroid">
+        <img id="asteroid3" src="../static/images/aster3.png" alt="Asteroid 3" class="asteroid">
+        <img id="asteroid4" src="../static/images/aster4.png" alt="Asteroid 4" class="asteroid">
     </div>
 </body>
 </html>
