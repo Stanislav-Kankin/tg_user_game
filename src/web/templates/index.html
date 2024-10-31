@@ -102,6 +102,7 @@
                         rocketCenterY + 25 > asteroid.rect.top
                     ) {
                         asteroid.element.style.display = 'none';
+                        showBoom(asteroid.rect.left, asteroid.rect.top);
                         showMessage(asteroid.rect.left, asteroid.rect.top, '-50', 'red');
                         score -= 50;
                         setTimeout(() => {
@@ -128,7 +129,7 @@
                         gameOver.style.fontSize = '30px';
                         gameOver.style.color = 'white';
                         gameOver.style.textAlign = 'center';
-                        gameOver.innerHTML = '<img src="../static/images/skull.png" alt="Game Over"><br>Game Over!<br><button id="restartButton"><img src="../static/images/restart.png" alt="Restart"></button>';
+                        gameOver.innerHTML = '<img src="../static/images/skull.png" alt="Game Over" style="width: 100px; height: 100px;"><br>Game Over!<br><button id="restartButton"><img src="../static/images/restart.png" alt="Restart" style="width: 100px; height: 100px;"></button>';
                         gameContainer.appendChild(gameOver);
 
                         document.getElementById('restartButton').addEventListener('click', () => {
@@ -162,6 +163,21 @@
                 setTimeout(() => {
                     gameContainer.removeChild(message);
                 }, 2000);
+            }
+
+            function showBoom(left, top) {
+                const boom = document.createElement('img');
+                boom.src = '../static/images/boom.gif';
+                boom.style.position = 'absolute';
+                boom.style.left = `${left}px`;
+                boom.style.top = `${top}px`;
+                boom.style.width = '50px';
+                boom.style.height = '50px';
+                gameContainer.appendChild(boom);
+
+                setTimeout(() => {
+                    gameContainer.removeChild(boom);
+                }, 1000);
             }
 
             setInterval(checkCollision, 100);
