@@ -12,16 +12,14 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             const rocket = document.getElementById('rocket');
-            const asteroid1 = document.getElementById('asteroid1');
-            const asteroid2 = document.getElementById('asteroid2');
-            const asteroid3 = document.getElementById('asteroid3');
-            const asteroid4 = document.getElementById('asteroid4');
             const gameContainer = document.getElementById('game-container');
             const scoreDisplay = document.getElementById('score');
             const levelDisplay = document.getElementById('level');
             let score = 0;
             let level = 1;
             let gameOver = false;
+            let asteroids = [];
+            let asteroidCount = 4;
 
             let isDragging = false;
             let offsetX, offsetY;
@@ -66,16 +64,20 @@
                 isDragging = false;
             });
 
-            function moveAsteroid(asteroid, delay) {
-                if (gameOver) return;
+            function createAsteroid(delay) {
+                const asteroid = document.createElement('img');
+                asteroid.className = 'asteroid';
+                asteroid.src = `../static/images/aster${Math.floor(Math.random() * 4) + 1}.png`;
                 asteroid.style.top = '-50px';
                 asteroid.style.left = `${Math.random() * (gameContainer.clientWidth - 50)}px`;
                 asteroid.style.transition = `top ${delay}s linear`;
                 asteroid.style.top = `${gameContainer.clientHeight}px`;
+                gameContainer.appendChild(asteroid);
+                asteroids.push({ element: asteroid, delay: delay, scored: false });
 
                 setTimeout(() => {
                     asteroid.style.transition = 'none';
-                    moveAsteroid(asteroid, delay);
+                    createAsteroid(delay);
                 }, delay * 1000);
             }
 
@@ -85,34 +87,23 @@
                 const rocketCenterX = rocketRect.left + rocketRect.width / 2;
                 const rocketCenterY = rocketRect.top + rocketRect.height / 2;
 
-                const asteroid1Rect = asteroid1.getBoundingClientRect();
-                const asteroid2Rect = asteroid2.getBoundingClientRect();
-                const asteroid3Rect = asteroid3.getBoundingClientRect();
-                const asteroid4Rect = asteroid4.getBoundingClientRect();
+                asteroids.forEach((asteroid, index) => {
+                    const asteroidRect = asteroid.element.getBoundingClientRect();
 
-                const asteroids = [
-                    { element: asteroid1, rect: asteroid1Rect, delay: 4, scored: false },
-                    { element: asteroid2, rect: asteroid2Rect, delay: 6, scored: false },
-                    { element: asteroid3, rect: asteroid3Rect, delay: 7, scored: false },
-                    { element: asteroid4, rect: asteroid4Rect, delay: 9, scored: false }
-                ];
-
-                asteroids.forEach(asteroid => {
                     if (
-                        rocketCenterX - 25 < asteroid.rect.right &&
-                        rocketCenterX + 25 > asteroid.rect.left &&
-                        rocketCenterY - 25 < asteroid.rect.bottom &&
-                        rocketCenterY + 25 > asteroid.rect.top
+                        rocketCenterX - 25 < asteroidRect.right &&
+                        rocketCenterX + 25 > asteroidRect.left &&
+                        rocketCenterY - 25 < asteroidRect.bottom &&
+                        rocketCenterY + 25 > asteroidRect.top
                     ) {
                         asteroid.element.style.display = 'none';
-                        showBoom(asteroid.rect.left, asteroid.rect.top);
-                        showMessage(asteroid.rect.left, asteroid.rect.top, '-50', 'red');
+                        showBoom(asteroidRect.left, asteroidRect.top);
+                        showMessage(asteroidRect.left, asteroidRect.top, '-50', 'red');
                         score -= 50;
-                        setTimeout(() => {
-                            asteroid.element.style.display = 'block';
-                        }, asteroid.delay * 1000);
-                    } else if (asteroid.rect.bottom >= gameContainer.clientHeight && !asteroid.scored) {
-                        showMessage(asteroid.rect.left, asteroid.rect.top, '+5', 'green');
+                        asteroids.splice(index, 1);
+                        createAsteroid(asteroid.delay);
+                    } else if (asteroidRect.bottom >= gameContainer.clientHeight && !asteroid.scored) {
+                        showMessage(asteroidRect.left, asteroidRect.top, '+5', 'green');
                         score += 5;
                         asteroid.scored = true;
                     }
@@ -140,6 +131,10 @@
 
                 if (score >= 100 * level) {
                     level++;
+                    if (level % 3 === 0) {
+                        asteroidCount++;
+                        createAsteroid(4); // Добавляем новый астероид с задержкой 4 секунды
+                    }
                     asteroids.forEach(asteroid => {
                         asteroid.delay = asteroid.delay / 1.5;
                         asteroid.scored = false; // Сброс флага scored при переходе на новый уровень
@@ -182,10 +177,9 @@
 
             setInterval(checkCollision, 100);
 
-            moveAsteroid(asteroid1, 4);
-            moveAsteroid(asteroid2, 6);
-            moveAsteroid(asteroid3, 7);
-            moveAsteroid(asteroid4, 9);
+            for (let i = 0; i < asteroidCount; i++) {
+                createAsteroid(4 + i * 2); // Начальные задержки для астероидов
+            }
         });
     </script>
 </head>
@@ -195,10 +189,6 @@
         <div id="score" style="position: absolute; top: 10px; left: 10px; font-size: 20px; color: white;">Score: 0</div>
         <div id="level" style="position: absolute; top: 10px; right: 10px; font-size: 20px; color: white;">Level: 1</div>
         <img id="rocket" src="../static/images/rocket.gif" alt="Rocket">
-        <img id="asteroid1" src="../static/images/aster1.png" alt="Asteroid 1" class="asteroid">
-        <img id="asteroid2" src="../static/images/aster2.png" alt="Asteroid 2" class="asteroid">
-        <img id="asteroid3" src="../static/images/aster3.png" alt="Asteroid 3" class="asteroid">
-        <img id="asteroid4" src="../static/images/aster4.png" alt="Asteroid 4" class="asteroid">
     </div>
 </body>
 </html>
