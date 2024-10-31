@@ -110,9 +110,14 @@
                         showBoom(asteroid.rect.left, asteroid.rect.top);
                         showMessage(asteroid.rect.left, asteroid.rect.top, '-50', 'red');
                         score -= 50;
-                        setTimeout(() => {
-                            asteroid.element.style.display = 'block';
-                        }, asteroid.delay * 1000);
+
+                        // Сразу же перемещаем астероид в начальное положение и запускаем его движение заново
+                        asteroid.element.style.top = '-50px';
+                        asteroid.element.style.left = `${Math.random() * (gameContainer.clientWidth - 50)}px`;
+                        asteroid.element.style.transition = `top ${asteroid.delay}s linear`;
+                        asteroid.element.style.top = `${gameContainer.clientHeight}px`;
+                        asteroid.element.style.display = 'block';
+                        asteroid.scored = false;
                     } else if (asteroid.rect.bottom >= gameContainer.clientHeight && !asteroid.scored) {
                         showMessage(asteroid.rect.left, asteroid.rect.top, '+5', 'green');
                         score += 5;
