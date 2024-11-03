@@ -17,6 +17,8 @@
             const gameContainer = document.getElementById('game-container');
             const scoreDisplay = document.getElementById('score');
             const levelDisplay = document.getElementById('level');
+            const hpDisplay = document.getElementById('hp');
+            const asteroidCountDisplay = document.getElementById('asteroid-count');
             const background = document.getElementById('background');
             const background2 = document.getElementById('background2');
 
@@ -24,6 +26,7 @@
             let score = 0;
             let level = 1;
             let gameOver = false;
+            let hp = 10;
 
             let isDragging = false;
             let offsetX, offsetY;
@@ -187,8 +190,8 @@
                     if (distance < collisionRadius) {
                         asteroid.style.display = 'none';
                         showBoom(asteroidRect.left, asteroidRect.top);
-                        showMessage(asteroidRect.left, asteroidRect.top, '-50', 'red');
-                        score -= 50;
+                        showMessage(asteroidRect.left, asteroidRect.top, '-1 HP', 'red');
+                        hp -= 1;
 
                         // Сразу же перемещаем астероид в начальное положение и запускаем его движение заново
                         asteroid.style.top = '-50px';
@@ -197,18 +200,15 @@
                         asteroid.style.top = `${gameContainer.clientHeight}px`;
                         asteroid.style.display = 'block';
                         asteroid.scored = false;
-                    } else if (asteroidRect.bottom >= gameContainer.clientHeight && !asteroid.scored) {
-                        showMessage(asteroidRect.left, asteroidRect.top, '+5', 'green');
-                        score += 5;
-                        asteroid.scored = true;
-                        asteroid.style.display = 'none'; // Скрываем астероид
                     }
                 });
 
                 scoreDisplay.innerText = `Score: ${score}`;
                 levelDisplay.innerText = `Level: ${level}`;
+                hpDisplay.innerText = `HP: ${hp}`;
+                asteroidCountDisplay.innerText = `Asteroids: ${asteroids.length}`;
 
-                if (score < 0) {
+                if (hp <= 0) {
                     gameOver = true;
                     rocket.src = '../static/images/explosion.gif'; // Замените на путь к вашему изображению взрыва
                     setTimeout(() => {
@@ -301,6 +301,8 @@
         <div id="background2"></div>
         <div id="score" style="position: absolute; top: 10px; left: 10px; font-size: 20px; color: white;">Score: 0</div>
         <div id="level" style="position: absolute; top: 10px; right: 10px; font-size: 20px; color: white;">Level: 1</div>
+        <div id="hp" style="position: absolute; top: 40px; right: 10px; font-size: 20px; color: white;">HP: 10</div>
+        <div id="asteroid-count" style="position: absolute; top: 70px; right: 10px; font-size: 20px; color: white;">Asteroids: 0</div>
         <img id="rocket" src="../static/images/rocket.gif" alt="Rocket">
     </div>
 </body>
