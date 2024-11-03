@@ -14,13 +14,15 @@
         document.addEventListener('DOMContentLoaded', () => {
             // Получение элементов DOM
             const rocket = document.getElementById('rocket');
+            const asteroid1 = document.getElementById('asteroid1');
+            const asteroid2 = document.getElementById('asteroid2');
+            const asteroid3 = document.getElementById('asteroid3');
+            const asteroid4 = document.getElementById('asteroid4');
             const gameContainer = document.getElementById('game-container');
             const scoreDisplay = document.getElementById('score');
             const levelDisplay = document.getElementById('level');
             const background = document.getElementById('background');
             const background2 = document.getElementById('background2');
-            const gameOverSound = document.getElementById('game-over-sound');
-            const boomSound = document.getElementById('boom-sound');
 
             // Инициализация переменных
             let score = 0;
@@ -33,9 +35,9 @@
             // Обработка событий мыши для перемещения ракеты
             rocket.addEventListener('mousedown', (e) => {
                 isDragging = true;
-                const gameContainerRect = gameContainer.getBoundingClientRect();
-                offsetX = e.clientX - rocket.getBoundingClientRect().left + gameContainerRect.left;
-                offsetY = e.clientY - rocket.getBoundingClientRect().top + gameContainerRect.top;
+                const rocketRect = rocket.getBoundingClientRect();
+                offsetX = e.clientX - rocketRect.left;
+                offsetY = e.clientY - rocketRect.top;
             });
 
             document.addEventListener('mousemove', (e) => {
@@ -55,9 +57,9 @@
             rocket.addEventListener('touchstart', (e) => {
                 isDragging = true;
                 const touch = e.touches[0];
-                const gameContainerRect = gameContainer.getBoundingClientRect();
-                offsetX = touch.clientX - rocket.getBoundingClientRect().left + gameContainerRect.left;
-                offsetY = touch.clientY - rocket.getBoundingClientRect().top + gameContainerRect.top;
+                const rocketRect = rocket.getBoundingClientRect();
+                offsetX = touch.clientX - rocketRect.left;
+                offsetY = touch.clientY - rocketRect.top;
             });
 
             document.addEventListener('touchmove', (e) => {
@@ -73,19 +75,6 @@
             document.addEventListener('touchend', () => {
                 isDragging = false;
             });
-
-            // Функция для создания астероида
-            function createAsteroid(id, src, delay) {
-                const asteroid = document.createElement('img');
-                asteroid.id = id;
-                asteroid.src = src;
-                asteroid.alt = `Asteroid ${id}`;
-                asteroid.className = 'asteroid';
-                asteroid.style.display = 'none';
-                asteroid.delay = delay;
-                gameContainer.appendChild(asteroid);
-                return asteroid;
-            }
 
             // Функция для движения астероидов
             function moveAsteroid(asteroid, delay) {
@@ -110,12 +99,23 @@
                 const rocketCenterX = rocketRect.left + rocketRect.width / 2;
                 const rocketCenterY = rocketRect.top + rocketRect.height / 2;
 
-                const collisionRadius = 28; // Радиус столкновения
+                const asteroid1Rect = asteroid1.getBoundingClientRect();
+                const asteroid2Rect = asteroid2.getBoundingClientRect();
+                const asteroid3Rect = asteroid3.getBoundingClientRect();
+                const asteroid4Rect = asteroid4.getBoundingClientRect();
+
+                const asteroids = [
+                    { element: asteroid1, rect: asteroid1Rect, delay: 4, scored: false },
+                    { element: asteroid2, rect: asteroid2Rect, delay: 6, scored: false },
+                    { element: asteroid3, rect: asteroid3Rect, delay: 7, scored: false },
+                    { element: asteroid4, rect: asteroid4Rect, delay: 9, scored: false }
+                ];
+
+                const collisionRadius = 25; // Радиус столкновения
 
                 asteroids.forEach(asteroid => {
-                    const asteroidRect = asteroid.getBoundingClientRect();
-                    const asteroidCenterX = asteroidRect.left + asteroidRect.width / 2;
-                    const asteroidCenterY = asteroidRect.top + asteroidRect.height / 2;
+                    const asteroidCenterX = asteroid.rect.left + asteroid.rect.width / 2;
+                    const asteroidCenterY = asteroid.rect.top + asteroid.rect.height / 2;
 
                     const distance = Math.sqrt(
                         Math.pow(rocketCenterX - asteroidCenterX, 2) +
@@ -123,24 +123,23 @@
                     );
 
                     if (distance < collisionRadius) {
-                        asteroid.style.display = 'none';
-                        showBoom(asteroidRect.left, asteroidRect.top);
-                        showMessage(asteroidRect.left, asteroidRect.top, '-50', 'red');
+                        asteroid.element.style.display = 'none';
+                        showBoom(asteroid.rect.left, asteroid.rect.top);
+                        showMessage(asteroid.rect.left, asteroid.rect.top, '-50', 'red');
                         score -= 50;
-                        boomSound.play(); // Воспроизведение звука столкновения
 
                         // Сразу же перемещаем астероид в начальное положение и запускаем его движение заново
-                        asteroid.style.top = '-50px';
-                        asteroid.style.left = `${Math.random() * (gameContainer.clientWidth - 50)}px`;
-                        asteroid.style.transition = `top ${asteroid.delay}s linear`;
-                        asteroid.style.top = `${gameContainer.clientHeight}px`;
-                        asteroid.style.display = 'block';
+                        asteroid.element.style.top = '-50px';
+                        asteroid.element.style.left = `${Math.random() * (gameContainer.clientWidth - 50)}px`;
+                        asteroid.element.style.transition = `top ${asteroid.delay}s linear`;
+                        asteroid.element.style.top = `${gameContainer.clientHeight}px`;
+                        asteroid.element.style.display = 'block';
                         asteroid.scored = false;
-                    } else if (asteroidRect.bottom >= gameContainer.clientHeight && !asteroid.scored) {
-                        showMessage(asteroidRect.left, asteroidRect.top, '+5', 'green');
+                    } else if (asteroid.rect.bottom >= gameContainer.clientHeight && !asteroid.scored) {
+                        showMessage(asteroid.rect.left, asteroid.rect.top, '+5', 'green');
                         score += 5;
                         asteroid.scored = true;
-                        asteroid.style.display = 'none'; // Скрываем астероид
+                        asteroid.element.style.display = 'none'; // Скрываем астероид
                     }
                 });
 
@@ -150,7 +149,6 @@
                 if (score < 0) {
                     gameOver = true;
                     rocket.src = '../static/images/explosion.gif'; // Замените на путь к вашему изображению взрыва
-                    gameOverSound.play(); // Воспроизведение звука проигрыша
                     setTimeout(() => {
                         const gameOverMessage = document.createElement('div');
                         gameOverMessage.style.position = 'absolute';
@@ -165,26 +163,12 @@
                     }, 1000);
                 }
 
-                if (score >= 100 * level) {
+                if (score >= 1000 * level) {
                     level++;
-                    updateAsteroids();
-                }
-            }
-
-            // Функция для обновления астероидов в зависимости от уровня
-            function updateAsteroids() {
-                const asteroidSources = ['../static/images/aster1.png', '../static/images/aster2.png', '../static/images/aster3.png', '../static/images/aster4.png'];
-                const delays = [7, 6, 5, 4];
-
-                // Удаляем старые астероиды
-                asteroids.forEach(asteroid => gameContainer.removeChild(asteroid));
-
-                // Создаем новые астероиды
-                asteroids = [];
-                for (let i = 0; i < level + 3; i++) {
-                    const asteroid = createAsteroid(`asteroid${i + 1}`, asteroidSources[i % asteroidSources.length], delays[i % delays.length]);
-                    asteroids.push(asteroid);
-                    moveAsteroid(asteroid, asteroid.delay);
+                    asteroids.forEach(asteroid => {
+                        asteroid.delay = asteroid.delay / 1.5;
+                        asteroid.scored = false; // Сброс флага scored при переходе на новый уровень
+                    });
                 }
             }
 
@@ -234,13 +218,16 @@
                     if (position >= gameContainer.clientHeight) {
                         position = 0;
                     }
-                }, 21); // Увеличьте значение для более медленного движения
+                }, 20); // Увеличьте значение для более медленного движения
             }
 
             // Запуск игры
             setInterval(checkCollision, 100);
 
-            updateAsteroids();
+            moveAsteroid(asteroid1, 4);
+            moveAsteroid(asteroid2, 6);
+            moveAsteroid(asteroid3, 7);
+            moveAsteroid(asteroid4, 9);
 
             moveBackground();
         });
@@ -253,8 +240,10 @@
         <div id="score" style="position: absolute; top: 10px; left: 10px; font-size: 20px; color: white;">Score: 0</div>
         <div id="level" style="position: absolute; top: 10px; right: 10px; font-size: 20px; color: white;">Level: 1</div>
         <img id="rocket" src="../static/images/rocket.gif" alt="Rocket">
-        <audio id="game-over-sound" src="../static/sound/av.mp3"></audio>
-        <audio id="boom-sound" src="../static/sound/boom1.mp3"></audio>
+        <img id="asteroid1" src="../static/images/aster1.png" alt="Asteroid 1" class="asteroid">
+        <img id="asteroid2" src="../static/images/aster2.png" alt="Asteroid 2" class="asteroid">
+        <img id="asteroid3" src="../static/images/aster3.png" alt="Asteroid 3" class="asteroid">
+        <img id="asteroid4" src="../static/images/aster4.png" alt="Asteroid 4" class="asteroid">
     </div>
 </body>
 </html>
