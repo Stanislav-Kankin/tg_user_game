@@ -139,6 +139,7 @@
                         showMessage(asteroid.rect.left, asteroid.rect.top, '+5', 'green');
                         score += 5;
                         asteroid.scored = true;
+                        asteroid.element.style.display = 'none'; // Скрываем астероид
                     }
                 });
 
