@@ -161,7 +161,7 @@
 
             // Функция для обновления астероидов в зависимости от уровня
             function updateAsteroids() {
-                const delays = [6, 6, 5, 5];
+                const delays = [10, 9, 8, 7];
                 asteroids.forEach((asteroid, index) => {
                     asteroid.delay = Math.max(delays[index] - level + 1, 2);
                     asteroid.style.display = 'block';
