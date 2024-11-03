@@ -106,13 +106,14 @@
             // Функция для создания лазера
             function createLaser() {
                 console.log('Creating laser...');
-                const laser = document.createElement('div');
+                const laser = document.createElement('img');
                 laser.className = 'laser';
+                laser.src = '../static/images/laser.png';
                 const rocketRect = rocket.getBoundingClientRect();
                 const rocketCenterX = rocketRect.left + rocketRect.width / 2;
                 const rocketCenterY = rocketRect.top + rocketRect.height / 2;
-                laser.style.left = `${rocketCenterX}px`;
-                laser.style.top = `${rocketCenterY}px`;
+                laser.style.left = `${rocketCenterX - 2}px`; // Центрирование лазера
+                laser.style.top = `${rocketCenterY - 20}px`; // Начальная позиция лазера
                 gameContainer.appendChild(laser);
                 console.log('Laser created:', laser);
                 moveLaser(laser);
