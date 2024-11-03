@@ -28,6 +28,9 @@
             let isDragging = false;
             let offsetX, offsetY;
 
+            // Массив с именами астероидов
+            const asteroidNames = ['aster1', 'aster2', 'aster3', 'aster4', 'aster5', 'aster6', 'aster7', 'aster8'];
+
             // Обработка событий мыши для перемещения ракеты
             rocket.addEventListener('mousedown', (e) => {
                 isDragging = true;
@@ -76,8 +79,8 @@
             function createAsteroid(id, delay) {
                 const asteroid = document.createElement('img');
                 asteroid.id = id;
-                asteroid.src = `../static/images/aster${id.slice(-1)}.png`;
-                asteroid.alt = `Asteroid ${id.slice(-1)}`;
+                asteroid.src = `../static/images/${asteroidNames[id % asteroidNames.length]}.png`;
+                asteroid.alt = `Asteroid ${id % asteroidNames.length + 1}`;
                 asteroid.className = 'asteroid';
                 gameContainer.appendChild(asteroid);
                 moveAsteroid(asteroid, delay);
@@ -163,7 +166,7 @@
 
                 if (score >= 100 * level) {
                     level++;
-                    createAsteroid(`asteroid${level + 3}`, 4 + level);
+                    createAsteroid(level + 3, 4 + level);
                 }
             }
 
@@ -219,10 +222,10 @@
             // Запуск игры
             setInterval(checkCollision, 100);
 
-            createAsteroid('asteroid1', 4);
-            createAsteroid('asteroid2', 5);
-            createAsteroid('asteroid3', 6);
-            createAsteroid('asteroid4', 7);
+            createAsteroid(0, 4);
+            createAsteroid(1, 6);
+            createAsteroid(2, 7);
+            createAsteroid(3, 9);
 
             moveBackground();
         });
