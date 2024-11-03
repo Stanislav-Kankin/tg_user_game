@@ -24,7 +24,6 @@
             let score = 0;
             let level = 1;
             let gameOver = false;
-            let shotsPerSecond = 1;
 
             let isDragging = false;
             let offsetX, offsetY;
@@ -213,9 +212,6 @@
                 if (score >= 100 * level) {
                     level++;
                     createAsteroid(level + 3, 4 + level);
-                    if (level % 3 === 0) {
-                        shotsPerSecond++;
-                    }
                 }
             }
 
@@ -279,11 +275,7 @@
             moveBackground();
 
             // Запуск выстрелов лазера
-            setInterval(() => {
-                for (let i = 0; i < shotsPerSecond; i++) {
-                    shootLaser();
-                }
-            }, 1000);
+            setInterval(shootLaser, 1000);
         });
     </script>
 </head>
