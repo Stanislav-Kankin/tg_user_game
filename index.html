@@ -82,7 +82,6 @@
                 asteroid.src = `../static/images/${asteroidNames[id % asteroidNames.length]}.png`;
                 asteroid.alt = `Asteroid ${id % asteroidNames.length + 1}`;
                 asteroid.className = 'asteroid';
-                asteroid.health = 2; // Прочность астероида
                 gameContainer.appendChild(asteroid);
                 moveAsteroid(asteroid, delay);
             }
@@ -103,63 +102,7 @@
                 }, delay * 1000);
             }
 
-            // Функция для создания лазера
-            function createLaser() {
-                const laser = document.createElement('div');
-                laser.className = 'laser';
-                const rocketRect = rocket.getBoundingClientRect();
-                const rocketCenterX = rocketRect.left + rocketRect.width / 2;
-                const rocketCenterY = rocketRect.top + rocketRect.height / 2;
-                laser.style.left = `${rocketCenterX}px`;
-                laser.style.top = `${rocketCenterY}px`;
-                gameContainer.appendChild(laser);
-                moveLaser(laser);
-            }
-
-            // Функция для движения лазера
-            function moveLaser(laser) {
-                const laserSpeed = 5; // Скорость лазера
-                const laserInterval = setInterval(() => {
-                    if (gameOver) {
-                        clearInterval(laserInterval);
-                        gameContainer.removeChild(laser);
-                        return;
-                    }
-                    const laserRect = laser.getBoundingClientRect();
-                    if (laserRect.top <= 0) {
-                        clearInterval(laserInterval);
-                        gameContainer.removeChild(laser);
-                        return;
-                    }
-                    laser.style.top = `${laserRect.top - laserSpeed}px`;
-                    checkLaserCollision(laser);
-                }, 16); // 16ms для 60 FPS
-            }
-
-            // Функция для проверки столкновений лазера с астероидами
-            function checkLaserCollision(laser) {
-                const laserRect = laser.getBoundingClientRect();
-                const asteroids = Array.from(document.getElementsByClassName('asteroid'));
-
-                asteroids.forEach(asteroid => {
-                    const asteroidRect = asteroid.getBoundingClientRect();
-                    if (laserRect.left < asteroidRect.right &&
-                        laserRect.right > asteroidRect.left &&
-                        laserRect.top < asteroidRect.bottom &&
-                        laserRect.bottom > asteroidRect.top) {
-                        asteroid.health -= 1;
-                        if (asteroid.health <= 0) {
-                            asteroid.style.display = 'none';
-                            showBoom(asteroidRect.left, asteroidRect.top);
-                            showMessage(asteroidRect.left, asteroidRect.top, '+10', 'green');
-                            score += 10;
-                        }
-                        gameContainer.removeChild(laser);
-                    }
-                });
-            }
-
-            // Функция для проверки столкновений ракеты с астероидами
+            // Функция для проверки столкновений
             function checkCollision() {
                 if (gameOver) return;
                 const rocketRect = rocket.getBoundingClientRect();
@@ -285,9 +228,6 @@
             createAsteroid(3, 7);
 
             moveBackground();
-
-            // Запуск лазеров
-            setInterval(createLaser, 500);
         });
     </script>
 </head>
