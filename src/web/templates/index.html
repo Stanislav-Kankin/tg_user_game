@@ -111,13 +111,18 @@
                     { element: asteroid4, rect: asteroid4Rect, delay: 9, scored: false }
                 ];
 
+                const collisionRadius = 5; // Радиус столкновения
+
                 asteroids.forEach(asteroid => {
-                    if (
-                        rocketCenterX - 25 < asteroid.rect.right &&
-                        rocketCenterX + 25 > asteroid.rect.left &&
-                        rocketCenterY - 25 < asteroid.rect.bottom &&
-                        rocketCenterY + 25 > asteroid.rect.top
-                    ) {
+                    const asteroidCenterX = asteroid.rect.left + asteroid.rect.width / 2;
+                    const asteroidCenterY = asteroid.rect.top + asteroid.rect.height / 2;
+
+                    const distance = Math.sqrt(
+                        Math.pow(rocketCenterX - asteroidCenterX, 2) +
+                        Math.pow(rocketCenterY - asteroidCenterY, 2)
+                    );
+
+                    if (distance < collisionRadius) {
                         asteroid.element.style.display = 'none';
                         showBoom(asteroid.rect.left, asteroid.rect.top);
                         showMessage(asteroid.rect.left, asteroid.rect.top, '-50', 'red');
