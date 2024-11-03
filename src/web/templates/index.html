@@ -105,6 +105,7 @@
 
             // Функция для создания лазера
             function createLaser() {
+                console.log('Creating laser...');
                 const laser = document.createElement('div');
                 laser.className = 'laser';
                 const rocketRect = rocket.getBoundingClientRect();
@@ -113,11 +114,13 @@
                 laser.style.left = `${rocketCenterX}px`;
                 laser.style.top = `${rocketCenterY}px`;
                 gameContainer.appendChild(laser);
+                console.log('Laser created:', laser);
                 moveLaser(laser);
             }
 
             // Функция для движения лазера
             function moveLaser(laser) {
+                console.log('Moving laser...');
                 const laserSpeed = 5; // Скорость лазера
                 const laserInterval = setInterval(() => {
                     if (gameOver) {
@@ -287,7 +290,7 @@
             moveBackground();
 
             // Запуск лазеров
-            setInterval(createLaser, 1000);
+            setInterval(createLaser, 500);
         });
     </script>
 </head>
