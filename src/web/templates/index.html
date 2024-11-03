@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -108,8 +109,10 @@
             function shootLaser() {
                 const laser = document.createElement('div');
                 laser.className = 'laser';
-                laser.style.left = `${rocket.offsetLeft + rocket.offsetWidth / 2 - 2}px`;
-                laser.style.top = `${rocket.offsetTop}px`;
+                const rocketRect = rocket.getBoundingClientRect();
+                const laserLeft = rocketRect.left + rocketRect.width / 2 - 2; // Центр ракеты
+                laser.style.left = `${laserLeft}px`;
+                laser.style.top = `${rocketRect.top}px`;
                 gameContainer.appendChild(laser);
 
                 const laserInterval = setInterval(() => {
@@ -285,13 +288,16 @@
         });
     </script>
 </head>
+
 <body>
     <div id="game-container">
         <div id="background"></div>
         <div id="background2"></div>
         <div id="score" style="position: absolute; top: 10px; left: 10px; font-size: 20px; color: white;">Score: 0</div>
-        <div id="level" style="position: absolute; top: 10px; right: 10px; font-size: 20px; color: white;">Level: 1</div>
+        <div id="level" style="position: absolute; top: 10px; right: 10px; font-size: 20px; color: white;">Level: 1
+        </div>
         <img id="rocket" src="../static/images/rocket.gif" alt="Rocket">
     </div>
 </body>
+
 </html>
