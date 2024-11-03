@@ -14,7 +14,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             // Получение элементов DOM
             const rocket = document.getElementById('rocket');
-            const asteroids = Array.from({ length: 4 }, (_, i) => document.getElementById(`asteroid${i + 1}`));
             const gameContainer = document.getElementById('game-container');
             const scoreDisplay = document.getElementById('score');
             const levelDisplay = document.getElementById('level');
@@ -74,6 +73,19 @@
             document.addEventListener('touchend', () => {
                 isDragging = false;
             });
+
+            // Функция для создания астероида
+            function createAsteroid(id, src, delay) {
+                const asteroid = document.createElement('img');
+                asteroid.id = id;
+                asteroid.src = src;
+                asteroid.alt = `Asteroid ${id}`;
+                asteroid.className = 'asteroid';
+                asteroid.style.display = 'none';
+                asteroid.delay = delay;
+                gameContainer.appendChild(asteroid);
+                return asteroid;
+            }
 
             // Функция для движения астероидов
             function moveAsteroid(asteroid, delay) {
@@ -161,12 +173,19 @@
 
             // Функция для обновления астероидов в зависимости от уровня
             function updateAsteroids() {
-                const delays = [10, 9, 8, 7];
-                asteroids.forEach((asteroid, index) => {
-                    asteroid.delay = Math.max(delays[index] - level + 1, 2);
-                    asteroid.style.display = 'block';
+                const asteroidSources = ['../static/images/aster1.png', '../static/images/aster2.png', '../static/images/aster3.png', '../static/images/aster4.png'];
+                const delays = [7, 6, 5, 4];
+
+                // Удаляем старые астероиды
+                asteroids.forEach(asteroid => gameContainer.removeChild(asteroid));
+
+                // Создаем новые астероиды
+                asteroids = [];
+                for (let i = 0; i < level + 3; i++) {
+                    const asteroid = createAsteroid(`asteroid${i + 1}`, asteroidSources[i % asteroidSources.length], delays[i % delays.length]);
+                    asteroids.push(asteroid);
                     moveAsteroid(asteroid, asteroid.delay);
-                });
+                }
             }
 
             // Функция для отображения сообщений
@@ -234,10 +253,6 @@
         <div id="score" style="position: absolute; top: 10px; left: 10px; font-size: 20px; color: white;">Score: 0</div>
         <div id="level" style="position: absolute; top: 10px; right: 10px; font-size: 20px; color: white;">Level: 1</div>
         <img id="rocket" src="../static/images/rocket.gif" alt="Rocket">
-        <img id="asteroid1" src="../static/images/aster1.png" alt="Asteroid 1" class="asteroid">
-        <img id="asteroid2" src="../static/images/aster2.png" alt="Asteroid 2" class="asteroid">
-        <img id="asteroid3" src="../static/images/aster3.png" alt="Asteroid 3" class="asteroid">
-        <img id="asteroid4" src="../static/images/aster4.png" alt="Asteroid 4" class="asteroid">
         <audio id="game-over-sound" src="../static/sound/av.mp3"></audio>
         <audio id="boom-sound" src="../static/sound/boom1.mp3"></audio>
     </div>
