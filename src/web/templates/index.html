@@ -113,8 +113,6 @@
                 laser.style.top = `${rocketRect.top}px`;
                 gameContainer.appendChild(laser);
 
-                console.log('Laser created at:', laserLeft, rocketRect.top);
-
                 const laserInterval = setInterval(() => {
                     laser.style.top = `${laser.offsetTop - 5}px`;
                     if (laser.offsetTop < 0) {
