@@ -37,9 +37,9 @@
             // Обработка событий мыши для перемещения ракеты
             rocket.addEventListener('mousedown', (e) => {
                 isDragging = true;
-                const rocketRect = rocket.getBoundingClientRect();
-                offsetX = e.clientX - rocketRect.left;
-                offsetY = e.clientY - rocketRect.top;
+                const gameContainerRect = gameContainer.getBoundingClientRect();
+                offsetX = e.clientX - rocket.getBoundingClientRect().left + gameContainerRect.left;
+                offsetY = e.clientY - rocket.getBoundingClientRect().top + gameContainerRect.top;
             });
 
             document.addEventListener('mousemove', (e) => {
@@ -59,9 +59,9 @@
             rocket.addEventListener('touchstart', (e) => {
                 isDragging = true;
                 const touch = e.touches[0];
-                const rocketRect = rocket.getBoundingClientRect();
-                offsetX = touch.clientX - rocketRect.left;
-                offsetY = touch.clientY - rocketRect.top;
+                const gameContainerRect = gameContainer.getBoundingClientRect();
+                offsetX = touch.clientX - rocket.getBoundingClientRect().left + gameContainerRect.left;
+                offsetY = touch.clientY - rocket.getBoundingClientRect().top + gameContainerRect.top;
             });
 
             document.addEventListener('touchmove', (e) => {
@@ -113,7 +113,7 @@
                     { element: asteroid4, rect: asteroid4Rect, delay: 9, scored: false }
                 ];
 
-                const collisionRadius = 25; // Радиус столкновения
+                const collisionRadius = 28; // Радиус столкновения
 
                 asteroids.forEach(asteroid => {
                     const asteroidCenterX = asteroid.rect.left + asteroid.rect.width / 2;
@@ -222,7 +222,7 @@
                     if (position >= gameContainer.clientHeight) {
                         position = 0;
                     }
-                }, 20); // Увеличьте значение для более медленного движения
+                }, 25); // Увеличьте значение для более медленного движения
             }
 
             // Запуск игры
