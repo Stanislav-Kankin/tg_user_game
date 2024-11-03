@@ -83,6 +83,7 @@
                 asteroid.alt = `Asteroid ${id % asteroidNames.length + 1}`;
                 asteroid.className = 'asteroid';
                 asteroid.health = 2; // Прочность астероида
+                asteroid.delay = delay; // Задержка для перемещения
                 gameContainer.appendChild(asteroid);
                 moveAsteroid(asteroid, delay);
             }
