@@ -23,6 +23,8 @@
             const levelDisplay = document.getElementById('level');
             const background = document.getElementById('background');
             const background2 = document.getElementById('background2');
+            const gameOverSound = document.getElementById('game-over-sound');
+            const boomSound = document.getElementById('boom-sound');
 
             // Инициализация переменных
             let score = 0;
@@ -111,7 +113,7 @@
                     { element: asteroid4, rect: asteroid4Rect, delay: 9, scored: false }
                 ];
 
-                const collisionRadius = 35; // Радиус столкновения
+                const collisionRadius = 25; // Радиус столкновения
 
                 asteroids.forEach(asteroid => {
                     const asteroidCenterX = asteroid.rect.left + asteroid.rect.width / 2;
@@ -127,6 +129,7 @@
                         showBoom(asteroid.rect.left, asteroid.rect.top);
                         showMessage(asteroid.rect.left, asteroid.rect.top, '-50', 'red');
                         score -= 50;
+                        boomSound.play(); // Воспроизведение звука столкновения
 
                         // Сразу же перемещаем астероид в начальное положение и запускаем его движение заново
                         asteroid.element.style.top = '-50px';
@@ -149,6 +152,7 @@
                 if (score < 0) {
                     gameOver = true;
                     rocket.src = '../static/images/explosion.gif'; // Замените на путь к вашему изображению взрыва
+                    gameOverSound.play(); // Воспроизведение звука проигрыша
                     setTimeout(() => {
                         const gameOverMessage = document.createElement('div');
                         gameOverMessage.style.position = 'absolute';
@@ -244,6 +248,8 @@
         <img id="asteroid2" src="../static/images/aster2.png" alt="Asteroid 2" class="asteroid">
         <img id="asteroid3" src="../static/images/aster3.png" alt="Asteroid 3" class="asteroid">
         <img id="asteroid4" src="../static/images/aster4.png" alt="Asteroid 4" class="asteroid">
+        <audio id="game-over-sound" src="../static/sound/av.mp3"></audio>
+        <audio id="boom-sound" src="../static/sound/boom1.mp3"></audio>
     </div>
 </body>
 </html>
