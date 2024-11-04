@@ -43,7 +43,7 @@ class UserMiddleware(BaseMiddleware):
                 )
 
         user = await User.get_or_create(
-            id=event.from_user.id, username=event.from_user.username
+            i_id=event.from_user.id, s_username=event.from_user.username
             )
         data["user"] = user[0]
         return await handler(event, data)
