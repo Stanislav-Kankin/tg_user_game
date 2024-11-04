@@ -22,6 +22,7 @@
             const background = document.getElementById('background');
             const background2 = document.getElementById('background2');
             const joystick = document.getElementById('joystick');
+            const joystick_inner = document.getElementById('joystick_inner');
 
             // Инициализация переменных
             let i_score = 0;
@@ -45,17 +46,24 @@
 
             document.addEventListener('mousemove', (e) => {
                 if (b_is_dragging) {
-                    let x = e.clientX - f_offset_x - rocket.clientWidth / 2;
-                    let y = e.clientY - f_offset_y - rocket.clientHeight / 2;
-                    x = Math.max(0, Math.min(x, game_container.clientWidth - rocket.clientWidth));
-                    y = Math.max(0, Math.min(y, game_container.clientHeight - rocket.clientHeight));
-                    rocket.style.left = `${x}px`;
-                    rocket.style.top = `${y}px`;
+                    const joystick_rect = joystick.getBoundingClientRect();
+                    let x = e.clientX - f_offset_x - joystick_inner.clientWidth / 2;
+                    let y = e.clientY - f_offset_y - joystick_inner.clientHeight / 2;
+                    x = Math.max(0, Math.min(x, joystick.clientWidth - joystick_inner.clientWidth));
+                    y = Math.max(0, Math.min(y, joystick.clientHeight - joystick_inner.clientHeight));
+                    joystick_inner.style.left = `${x}px`;
+                    joystick_inner.style.top = `${y}px`;
+
+                    // Перемещение ракеты
+                    move_rocket(x, y);
                 }
             });
 
             document.addEventListener('mouseup', () => {
                 b_is_dragging = false;
+                joystick_inner.style.left = '50%';
+                joystick_inner.style.top = '50%';
+                joystick_inner.style.transform = 'translate(-50%, -50%)';
             });
 
             // Обработка событий тач для перемещения ракеты
@@ -70,18 +78,45 @@
             document.addEventListener('touchmove', (e) => {
                 if (b_is_dragging) {
                     const touch = e.touches[0];
-                    let x = touch.clientX - f_offset_x - rocket.clientWidth / 2;
-                    let y = touch.clientY - f_offset_y - rocket.clientHeight / 2;
-                    x = Math.max(0, Math.min(x, game_container.clientWidth - rocket.clientWidth));
-                    y = Math.max(0, Math.min(y, game_container.clientHeight - rocket.clientHeight));
-                    rocket.style.left = `${x}px`;
-                    rocket.style.top = `${y}px`;
+                    const joystick_rect = joystick.getBoundingClientRect();
+                    let x = touch.clientX - f_offset_x - joystick_inner.clientWidth / 2;
+                    let y = touch.clientY - f_offset_y - joystick_inner.clientHeight / 2;
+                    x = Math.max(0, Math.min(x, joystick.clientWidth - joystick_inner.clientWidth));
+                    y = Math.max(0, Math.min(y, joystick.clientHeight - joystick_inner.clientHeight));
+                    joystick_inner.style.left = `${x}px`;
+                    joystick_inner.style.top = `${y}px`;
+
+                    // Перемещение ракеты
+                    move_rocket(x, y);
                 }
             });
 
             document.addEventListener('touchend', () => {
                 b_is_dragging = false;
+                joystick_inner.style.left = '50%';
+                joystick_inner.style.top = '50%';
+                joystick_inner.style.transform = 'translate(-50%, -50%)';
             });
+
+            // Функция для перемещения ракеты
+            function move_rocket(x, y) {
+                const joystick_rect = joystick.getBoundingClientRect();
+                const joystick_center_x = joystick_rect.left + joystick_rect.width / 2;
+                const joystick_center_y = joystick_rect.top + joystick_rect.height / 2;
+
+                const rocket_rect = rocket.getBoundingClientRect();
+                const rocket_center_x = rocket_rect.left + rocket_rect.width / 2;
+                const rocket_center_y = rocket_rect.top + rocket_rect.height / 2;
+
+                const distance_x = x - joystick_rect.width / 2;
+                const distance_y = y - joystick_rect.height / 2;
+
+                const new_rocket_x = rocket_center_x + distance_x;
+                const new_rocket_y = rocket_center_y + distance_y;
+
+                rocket.style.left = `${Math.max(0, Math.min(new_rocket_x, game_container.clientWidth - rocket.clientWidth))}px`;
+                rocket.style.top = `${Math.max(0, Math.min(new_rocket_y, game_container.clientHeight - rocket.clientHeight))}px`;
+            }
 
             // Функция для создания нового астероида
             function create_asteroid(i_id, f_delay) {
@@ -309,7 +344,9 @@
         <div id="hp" style="position: absolute; top: 40px; right: 10px; font-size: 20px; color: white;">HP: 10</div>
         <div id="asteroid_count" style="position: absolute; top: 70px; right: 10px; font-size: 20px; color: white;">Asteroids: 0</div>
         <img id="rocket" src="../static/images/rocket.gif" alt="Rocket">
-        <div id="joystick" style="position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%); width: 100px; height: 100px; border-radius: 50%; background-color: rgba(255, 255, 255, 0.5);"></div>
+        <div id="joystick" style="position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%); width: 100px; height: 100px; border-radius: 50%; background-color: rgba(255, 255, 255, 0.5);">
+            <div id="joystick_inner" style="position: absolute; width: 50px; height: 50px; border-radius: 50%; background-color: rgba(0, 0, 0, 0.5); left: 50%; top: 50%; transform: translate(-50%, -50%);"></div>
+        </div>
     </div>
 </body>
 </html>
