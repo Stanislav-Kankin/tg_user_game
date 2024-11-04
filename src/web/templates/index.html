@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -68,35 +69,45 @@
             });
 
             // Обработка событий тач для перемещения ракеты
+            let isDragging = false;
+            let offsetX, offsetY;
+
             rocket.addEventListener('touchstart', (e) => {
-                b_is_dragging = true;
+                e.preventDefault();
+                isDragging = true;
                 const touch = e.touches[0];
-                const rocket_rect = rocket.getBoundingClientRect();
-                f_offset_x = touch.clientX - rocket_rect.left;
-                f_offset_y = touch.clientY - rocket_rect.top;
+                const rocketRect = rocket.getBoundingClientRect();
+                offsetX = touch.clientX - rocketRect.left;
+                offsetY = touch.clientY - rocketRect.top;
             });
 
             document.addEventListener('touchmove', (e) => {
-                if (b_is_dragging) {
-                    e.preventDefault(); // Отмена стандартного поведения
+                if (isDragging) {
                     const touch = e.touches[0];
-                    let x = touch.clientX - f_offset_x;
-                    let y = touch.clientY - f_offset_y;
+                    let x = touch.clientX - offsetX;
+                    let y = touch.clientY - offsetY;
 
-                    // Проверка границ экрана
-                    const windowWidth = window.innerWidth;
-                    const windowHeight = window.innerHeight;
-                    const rocketWidth = rocket.offsetWidth;
-                    const rocketHeight = rocket.offsetHeight;
+                    // Ограничиваем перемещение ракеты в пределах контейнера
+                    const containerRect = gameContainer.getBoundingClientRect();
+                    if (x < 0) {
+                        x = 0;
+                    } else if (x + rocketRect.width > containerRect.width) {
+                        x = containerRect.width - rocketRect.width;
+                    }
 
-                    if (x < 0) x = 0;
-                    if (y < 0) y = 0;
-                    if (x + rocketWidth > windowWidth) x = windowWidth - rocketWidth;
-                    if (y + rocketHeight > windowHeight) y = windowHeight - rocketHeight;
+                    if (y < 0) {
+                        y = 0;
+                    } else if (y + rocketRect.height > containerRect.height) {
+                        y = containerRect.height - rocketRect.height;
+                    }
 
                     rocket.style.left = `${x}px`;
                     rocket.style.top = `${y}px`;
                 }
+            });
+
+            document.addEventListener('touchend', () => {
+                isDragging = false;
             });
 
             document.addEventListener('touchend', () => {
@@ -320,15 +331,19 @@
         });
     </script>
 </head>
+
 <body>
     <div id="game_container">
         <div id="background"></div>
         <div id="background2"></div>
         <div id="score" style="position: absolute; top: 10px; left: 10px; font-size: 20px; color: white;">Score: 0</div>
-        <div id="level" style="position: absolute; top: 10px; right: 10px; font-size: 20px; color: white;">Level: 1</div>
+        <div id="level" style="position: absolute; top: 10px; right: 10px; font-size: 20px; color: white;">Level: 1
+        </div>
         <div id="hp" style="position: absolute; top: 40px; right: 10px; font-size: 20px; color: white;">HP: 10</div>
-        <div id="asteroid_count" style="position: absolute; top: 70px; right: 10px; font-size: 20px; color: white;">Asteroids: 0</div>
+        <div id="asteroid_count" style="position: absolute; top: 70px; right: 10px; font-size: 20px; color: white;">
+            Asteroids: 0</div>
         <img id="rocket" src="../static/images/rocket.gif" alt="Rocket">
     </div>
 </body>
+
 </html>
