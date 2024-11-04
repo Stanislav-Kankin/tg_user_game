@@ -45,11 +45,12 @@
                 const rocket_dx = rocketSpeed * Math.cos(angle);
                 const rocket_dy = rocketSpeed * Math.sin(angle);
 
+                const rocket_rect = rocket.getBoundingClientRect();
                 const new_rocket_x = parseFloat(rocket.style.left || 0) + rocket_dx;
                 const new_rocket_y = parseFloat(rocket.style.top || 0) + rocket_dy;
 
-                rocket.style.left = `${Math.max(0, Math.min(new_rocket_x, game_container.clientWidth - rocket.clientWidth))}px`;
-                rocket.style.top = `${Math.max(0, Math.min(new_rocket_y, game_container.clientHeight - rocket.clientHeight))}px`;
+                rocket.style.left = `${Math.max(0, Math.min(new_rocket_x, game_container.clientWidth - rocket_rect.width))}px`;
+                rocket.style.top = `${Math.max(0, Math.min(new_rocket_y, game_container.clientHeight - rocket_rect.height))}px`;
             }
 
             // Обработка событий мыши для виртуального джойстика
