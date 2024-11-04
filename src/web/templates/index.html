@@ -31,30 +31,53 @@
             let i_hp = 10;
 
             let b_is_dragging = false;
-            let f_offset_x, f_offset_y;
-            let joystick_radius = 50; // Радиус джойстика
+            let f_offset_x = 0;
+            let f_offset_y = 0;
+            const joystick_radius = joystick.offsetWidth / 2; // Радиус джойстика
 
             // Массив с именами астероидов
             const list_asteroid_names = ['aster1', 'aster2', 'aster3', 'aster4', 'aster5', 'aster6', 'aster7', 'aster8'];
 
-            // Обработка событий мыши для перемещения ракеты
+            // Функция для перемещения ракеты
+            function move_rocket(x, y) {
+                const rocketSpeed = 5; // Задайте подходящую скорость движения ракеты
+                const angle = Math.atan2(y, x); // Угол направленный от центра джойстика
+                const rocket_dx = rocketSpeed * Math.cos(angle);
+                const rocket_dy = rocketSpeed * Math.sin(angle);
+
+                const new_rocket_x = parseFloat(rocket.style.left || 0) + rocket_dx;
+                const new_rocket_y = parseFloat(rocket.style.top || 0) + rocket_dy;
+
+                rocket.style.left = `${Math.max(0, Math.min(new_rocket_x, game_container.clientWidth - rocket.clientWidth))}px`;
+                rocket.style.top = `${Math.max(0, Math.min(new_rocket_y, game_container.clientHeight - rocket.clientHeight))}px`;
+            }
+
+            // Обработка событий мыши для виртуального джойстика
             joystick.addEventListener('mousedown', (e) => {
                 b_is_dragging = true;
                 const joystick_rect = joystick.getBoundingClientRect();
-                f_offset_x = e.clientX - (joystick_rect.left + joystick_rect.width / 2);
-                f_offset_y = e.clientY - (joystick_rect.top + joystick_rect.height / 2);
+                const joystick_center_x = joystick_rect.left + joystick_rect.width / 2;
+                const joystick_center_y = joystick_rect.top + joystick_rect.height / 2;
+
+                f_offset_x = e.clientX - joystick_center_x;
+                f_offset_y = e.clientY - joystick_center_y;
+
+                joystick_inner.style.transition = 'none'; // Отключаем анимацию для внутреннего джойстика
             });
 
+            // Обработка перемещения мыши
             document.addEventListener('mousemove', (e) => {
                 if (b_is_dragging) {
                     const joystick_rect = joystick.getBoundingClientRect();
-                    let x = e.clientX - f_offset_x - joystick_inner.clientWidth / 2;
-                    let y = e.clientY - f_offset_y - joystick_inner.clientHeight / 2;
+                    let x = e.clientX - (joystick_rect.left + joystick_rect.width / 2);
+                    let y = e.clientY - (joystick_rect.top + joystick_rect.height / 2);
+
                     let distance = Math.sqrt(x * x + y * y);
                     if (distance > joystick_radius) {
                         x = (x / distance) * joystick_radius;
                         y = (y / distance) * joystick_radius;
                     }
+
                     joystick_inner.style.left = `${joystick_rect.width / 2 + x - joystick_inner.clientWidth / 2}px`;
                     joystick_inner.style.top = `${joystick_rect.height / 2 + y - joystick_inner.clientHeight / 2}px`;
 
@@ -63,33 +86,44 @@
                 }
             });
 
+            // Завершение перетаскивания
             document.addEventListener('mouseup', () => {
                 b_is_dragging = false;
+                joystick_inner.style.transition = 'left 0.2s ease, top 0.2s ease'; // Включаем анимацию возвращения джойстика
                 joystick_inner.style.left = '50%';
                 joystick_inner.style.top = '50%';
                 joystick_inner.style.transform = 'translate(-50%, -50%)';
             });
 
-            // Обработка событий тач для перемещения ракеты
+            // Обработка событий тач для виртуального джойстика
             joystick.addEventListener('touchstart', (e) => {
+                e.preventDefault(); // Предотвращаем прокрутку на мобильных
+
                 b_is_dragging = true;
                 const touch = e.touches[0];
                 const joystick_rect = joystick.getBoundingClientRect();
-                f_offset_x = touch.clientX - (joystick_rect.left + joystick_rect.width / 2);
-                f_offset_y = touch.clientY - (joystick_rect.top + joystick_rect.height / 2);
+                const joystick_center_x = joystick_rect.left + joystick_rect.width / 2;
+                const joystick_center_y = joystick_rect.top + joystick_rect.height / 2;
+
+                f_offset_x = touch.clientX - joystick_center_x;
+                f_offset_y = touch.clientY - joystick_center_y;
+
+                joystick_inner.style.transition = 'none'; // Отключаем анимацию для внутреннего джойстика
             });
 
             document.addEventListener('touchmove', (e) => {
                 if (b_is_dragging) {
                     const touch = e.touches[0];
                     const joystick_rect = joystick.getBoundingClientRect();
-                    let x = touch.clientX - f_offset_x - joystick_inner.clientWidth / 2;
-                    let y = touch.clientY - f_offset_y - joystick_inner.clientHeight / 2;
+                    let x = touch.clientX - (joystick_rect.left + joystick_rect.width / 2);
+                    let y = touch.clientY - (joystick_rect.top + joystick_rect.height / 2);
+
                     let distance = Math.sqrt(x * x + y * y);
                     if (distance > joystick_radius) {
                         x = (x / distance) * joystick_radius;
                         y = (y / distance) * joystick_radius;
                     }
+
                     joystick_inner.style.left = `${joystick_rect.width / 2 + x - joystick_inner.clientWidth / 2}px`;
                     joystick_inner.style.top = `${joystick_rect.height / 2 + y - joystick_inner.clientHeight / 2}px`;
 
@@ -100,23 +134,11 @@
 
             document.addEventListener('touchend', () => {
                 b_is_dragging = false;
+                joystick_inner.style.transition = 'left 0.2s ease, top 0.2s ease'; // Включаем анимацию возвращения джойстика
                 joystick_inner.style.left = '50%';
                 joystick_inner.style.top = '50%';
                 joystick_inner.style.transform = 'translate(-50%, -50%)';
             });
-
-            // Функция для перемещения ракеты
-            function move_rocket(x, y) {
-                const rocket_rect = rocket.getBoundingClientRect();
-                const rocket_center_x = rocket_rect.left + rocket_rect.width / 2;
-                const rocket_center_y = rocket_rect.top + rocket_rect.height / 2;
-
-                const new_rocket_x = rocket_center_x + x * 2; // Увеличиваем скорость перемещения
-                const new_rocket_y = rocket_center_y + y * 2; // Увеличиваем скорость перемещения
-
-                rocket.style.left = `${Math.max(0, Math.min(new_rocket_x, game_container.clientWidth - rocket.clientWidth))}px`;
-                rocket.style.top = `${Math.max(0, Math.min(new_rocket_y, game_container.clientHeight - rocket.clientHeight))}px`;
-            }
 
             // Функция для создания нового астероида
             function create_asteroid(i_id, f_delay) {
