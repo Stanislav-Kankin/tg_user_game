@@ -32,6 +32,7 @@
 
             let b_is_dragging = false;
             let f_offset_x, f_offset_y;
+            let joystick_radius = 50; // Радиус джойстика
 
             // Массив с именами астероидов
             const list_asteroid_names = ['aster1', 'aster2', 'aster3', 'aster4', 'aster5', 'aster6', 'aster7', 'aster8'];
@@ -49,10 +50,13 @@
                     const joystick_rect = joystick.getBoundingClientRect();
                     let x = e.clientX - f_offset_x - joystick_inner.clientWidth / 2;
                     let y = e.clientY - f_offset_y - joystick_inner.clientHeight / 2;
-                    x = Math.max(0, Math.min(x, joystick.clientWidth - joystick_inner.clientWidth));
-                    y = Math.max(0, Math.min(y, joystick.clientHeight - joystick_inner.clientHeight));
-                    joystick_inner.style.left = `${x}px`;
-                    joystick_inner.style.top = `${y}px`;
+                    let distance = Math.sqrt(x * x + y * y);
+                    if (distance > joystick_radius) {
+                        x = (x / distance) * joystick_radius;
+                        y = (y / distance) * joystick_radius;
+                    }
+                    joystick_inner.style.left = `${joystick_rect.width / 2 + x - joystick_inner.clientWidth / 2}px`;
+                    joystick_inner.style.top = `${joystick_rect.height / 2 + y - joystick_inner.clientHeight / 2}px`;
 
                     // Перемещение ракеты
                     move_rocket(x, y);
@@ -81,10 +85,13 @@
                     const joystick_rect = joystick.getBoundingClientRect();
                     let x = touch.clientX - f_offset_x - joystick_inner.clientWidth / 2;
                     let y = touch.clientY - f_offset_y - joystick_inner.clientHeight / 2;
-                    x = Math.max(0, Math.min(x, joystick.clientWidth - joystick_inner.clientWidth));
-                    y = Math.max(0, Math.min(y, joystick.clientHeight - joystick_inner.clientHeight));
-                    joystick_inner.style.left = `${x}px`;
-                    joystick_inner.style.top = `${y}px`;
+                    let distance = Math.sqrt(x * x + y * y);
+                    if (distance > joystick_radius) {
+                        x = (x / distance) * joystick_radius;
+                        y = (y / distance) * joystick_radius;
+                    }
+                    joystick_inner.style.left = `${joystick_rect.width / 2 + x - joystick_inner.clientWidth / 2}px`;
+                    joystick_inner.style.top = `${joystick_rect.height / 2 + y - joystick_inner.clientHeight / 2}px`;
 
                     // Перемещение ракеты
                     move_rocket(x, y);
@@ -100,19 +107,12 @@
 
             // Функция для перемещения ракеты
             function move_rocket(x, y) {
-                const joystick_rect = joystick.getBoundingClientRect();
-                const joystick_center_x = joystick_rect.left + joystick_rect.width / 2;
-                const joystick_center_y = joystick_rect.top + joystick_rect.height / 2;
-
                 const rocket_rect = rocket.getBoundingClientRect();
                 const rocket_center_x = rocket_rect.left + rocket_rect.width / 2;
                 const rocket_center_y = rocket_rect.top + rocket_rect.height / 2;
 
-                const distance_x = x - joystick_rect.width / 2;
-                const distance_y = y - joystick_rect.height / 2;
-
-                const new_rocket_x = rocket_center_x + distance_x;
-                const new_rocket_y = rocket_center_y + distance_y;
+                const new_rocket_x = rocket_center_x + x * 2; // Увеличиваем скорость перемещения
+                const new_rocket_y = rocket_center_y + y * 2; // Увеличиваем скорость перемещения
 
                 rocket.style.left = `${Math.max(0, Math.min(new_rocket_x, game_container.clientWidth - rocket.clientWidth))}px`;
                 rocket.style.top = `${Math.max(0, Math.min(new_rocket_y, game_container.clientHeight - rocket.clientHeight))}px`;
